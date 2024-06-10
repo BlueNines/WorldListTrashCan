@@ -12,7 +12,7 @@ public class IsVersion {
     //如果版本小于1.12.2
 
 
-    public static boolean IsFoliaSever;
+    public static boolean IsFoliaServer;
     public static boolean IsPaperSever;
 
 

@@ -1,7 +1,6 @@
 package org.worldlisttrashcan.SpeakSystem;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static org.worldlisttrashcan.IsVersion.IsFoliaSever;
+import static org.worldlisttrashcan.IsVersion.IsFoliaServer;
 import static org.worldlisttrashcan.WorldListTrashCan.main;
 
 public class QuickUseCommandListener implements Listener {
@@ -67,7 +66,7 @@ public class QuickUseCommandListener implements Listener {
             player.sendMessage(NotUseCommandMessage);
         }else {
             PlayerToCommand.put(player,Command);
-            if(IsFoliaSever){
+            if(IsFoliaServer){
                 player.getScheduler().runDelayed(main, new Consumer<ScheduledTask>() {
                     @Override
                     public void accept(ScheduledTask scheduledTask) {

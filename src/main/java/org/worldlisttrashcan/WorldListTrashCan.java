@@ -1,29 +1,21 @@
 package org.worldlisttrashcan;
 
-import io.papermc.paper.event.entity.EntityMoveEvent;
-import io.papermc.paper.threadedregions.scheduler.EntityScheduler;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.checkerframework.checker.units.qual.A;
 import org.worldlisttrashcan.AutoTrashMain.AutoTrashListener;
 import org.worldlisttrashcan.DropSystem.DropLimitListener;
 import org.worldlisttrashcan.SimpleChange.NotPickArrowListener;
@@ -39,7 +31,6 @@ import org.worldlisttrashcan.WorldLimitEntityCount.PaperEntityMoveEvent;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static org.worldlisttrashcan.AutoTrashMain.AutoTrashListener.OriginalFeatureClearItemAddGlobalTrashModel;
 import static org.worldlisttrashcan.DropSystem.DropLimitListener.PlayerDropList;
@@ -166,8 +157,8 @@ public final class WorldListTrashCan extends JavaPlugin {
         worldListTrashCan = this;
         Bukkit.getPluginManager().registerEvents(new TrashListener(), this);
         Bukkit.getPluginManager().registerEvents(new GuiListener(), this);
-        IsFoliaSever = Bukkit.getServer().getVersion().contains("Folia");
-        IsFoliaSever = getConfig().getBoolean("IsFoliaSever");
+        IsFoliaServer = Bukkit.getServer().getVersion().contains("Folia");
+        IsFoliaServer = getConfig().getBoolean("IsFoliaServer");
 //        System.out.println("Bukkit.getServer().getVersion().contains "+Bukkit.getServer().getVersion());
         IsPaperSever = Bukkit.getServer().getVersion().contains("Paper");
 
@@ -189,7 +180,7 @@ public final class WorldListTrashCan extends JavaPlugin {
 
 
         //警告：folia服务器只能用上面的，不能用bukkit延时任务来检查密集实体
-        if((IsPaperSever&&!compareVersions("1.13.0"))||IsFoliaSever){
+        if((IsPaperSever&&!compareVersions("1.13.0"))|| IsFoliaServer){
 //            System.out.println("1");
             Bukkit.getPluginManager().registerEvents(new PaperEntityMoveEvent(), this);
         }else {
@@ -271,7 +262,7 @@ public final class WorldListTrashCan extends JavaPlugin {
 
                         PlayerToWorld.put(player,player.getWorld());
                         sender.sendMessage(message.find("SecondCountdown"));
-                        if(IsFoliaSever){
+                        if(IsFoliaServer){
                             ScheduledTask task = player.getScheduler().runDelayed(main, new Consumer<ScheduledTask>() {
 //                                int count = 0;
 
@@ -564,7 +555,7 @@ public final class WorldListTrashCan extends JavaPlugin {
 
 
 
-        if(IsFoliaSever){
+        if(IsFoliaServer){
             if(foliaClearItemsTask!=null){
                 foliaClearItemsTask.Stop();
             }

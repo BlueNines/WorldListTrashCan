@@ -16,12 +16,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.worldlisttrashcan.data;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import static org.worldlisttrashcan.IsVersion.IsFoliaSever;
 import static org.worldlisttrashcan.TrashMain.GlobalTrashGui.ClearContainer;
 import static org.worldlisttrashcan.TrashMain.TrashListener.GlobalItemSetString;
 import static org.worldlisttrashcan.WorldListTrashCan.*;

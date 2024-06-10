@@ -12,10 +12,9 @@ import org.worldlisttrashcan.WorldListTrashCan;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import static org.worldlisttrashcan.IsVersion.IsFoliaSever;
+import static org.worldlisttrashcan.IsVersion.IsFoliaServer;
 import static org.worldlisttrashcan.WorldListTrashCan.main;
 
 public class QuickSpeakListener implements Listener {
@@ -50,7 +49,7 @@ public class QuickSpeakListener implements Listener {
             player.sendMessage(NotSpeakMessage);
         }else {
             PlayerToChatMessage.put(player,event.getMessage());
-            if(IsFoliaSever){
+            if(IsFoliaServer){
                 player.getScheduler().runDelayed(main, new Consumer<ScheduledTask>() {
                     @Override
                     public void accept(ScheduledTask scheduledTask) {

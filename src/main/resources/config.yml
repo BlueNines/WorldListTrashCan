@@ -1,4 +1,4 @@
-IsFoliaSever: false
+IsFoliaServer: false
 Set:
   Debug: false
   Lang: message_zh.yml

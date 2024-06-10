@@ -4,7 +4,6 @@ import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
@@ -30,7 +29,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static org.worldlisttrashcan.IsVersion.IsFoliaSever;
+import static org.worldlisttrashcan.IsVersion.IsFoliaServer;
 import static org.worldlisttrashcan.WorldListTrashCan.*;
 //import static org.worldlisttrashcan.data.Data;
 import static org.worldlisttrashcan.data.getConfig;
@@ -231,7 +230,7 @@ public class TrashListener implements Listener {
 
 
                             int n = i;
-                            if(IsFoliaSever){
+                            if(IsFoliaServer){
                                 player.getScheduler().runDelayed(main, new Consumer<ScheduledTask>() {
                                     @Override
                                     public void accept(ScheduledTask scheduledTask) {

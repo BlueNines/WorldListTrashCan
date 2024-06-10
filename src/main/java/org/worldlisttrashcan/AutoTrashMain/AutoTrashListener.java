@@ -1,6 +1,5 @@
 package org.worldlisttrashcan.AutoTrashMain;
 
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
@@ -20,10 +19,8 @@ import org.worldlisttrashcan.message;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
-import static org.worldlisttrashcan.IsVersion.IsFoliaSever;
+import static org.worldlisttrashcan.IsVersion.IsFoliaServer;
 import static org.worldlisttrashcan.WorldListTrashCan.*;
 
 public class AutoTrashListener implements Listener {
@@ -151,7 +148,7 @@ public class AutoTrashListener implements Listener {
 //            System.out.println("3");
             ItemToPlayer.put(item,player);
 
-            if(IsFoliaSever){
+            if(IsFoliaServer){
                 FoliaRunable foliaRunable = new FoliaRunable();
                 foliaRunable.FoliaTask(event);
             }else {
