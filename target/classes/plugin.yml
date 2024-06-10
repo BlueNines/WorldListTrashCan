@@ -4,11 +4,15 @@ main: org.worldlisttrashcan.WorldListTrashCan
 author: BlueNine QQ 2831508831
 api-version: '1.13'
 folia-supported: true
+softdepend:
+  - Vault
 
 commands:
   WorldListTrashCan:
     description: WorldListTrashCan插件主指令
   WTC:
+    description: WorldListTrashCan插件副指令
+  wtc:
     description: WorldListTrashCan插件副指令
 permissions:
   WorldListTrashCan.BanGui:

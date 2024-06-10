@@ -167,6 +167,7 @@ public final class WorldListTrashCan extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new TrashListener(), this);
         Bukkit.getPluginManager().registerEvents(new GuiListener(), this);
         IsFoliaSever = Bukkit.getServer().getVersion().contains("Folia");
+        IsFoliaSever = getConfig().getBoolean("IsFoliaSever");
 //        System.out.println("Bukkit.getServer().getVersion().contains "+Bukkit.getServer().getVersion());
         IsPaperSever = Bukkit.getServer().getVersion().contains("Paper");
 
@@ -221,7 +222,7 @@ public final class WorldListTrashCan extends JavaPlugin {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 //        System.out.println(command.toString()+"："+args.toString());
         // 检查是否是管理员 (OP) 使用命令
-        if (command.getName().equalsIgnoreCase("WorldListTrashCan")||command.getName().equalsIgnoreCase("WTC")) {
+        if (command.getName().equalsIgnoreCase("WorldListTrashCan")|| command.getName().equalsIgnoreCase("WTC")) {
             if (args.length == 0) {
                 sender.sendMessage(ChatColor.GREEN + "WorldListTrashCan " + ChatColor.BLUE + "作者QQ：2831508831");
                 sender.sendMessage(ChatColor.YELLOW + "/WorldListTrashCan help" + ChatColor.BLUE + "帮助");
