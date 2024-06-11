@@ -2,10 +2,12 @@ package org.worldlisttrashcan.SpeakSystem;
 
 
 
+import io.papermc.paper.event.player.AsyncChatEvent;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.worldlisttrashcan.WorldListTrashCan;
@@ -38,17 +40,29 @@ public class QuickSpeakListener implements Listener {
     }
 
     @EventHandler
-    public void PlayerOnSpeak(PlayerChatEvent event){
+    //只有低版本bukkit有
+//    public void PlayerOnSpeak(PlayerChatEvent event){
+    //中高版本有
+    public void PlayerOnSpeak(AsyncPlayerChatEvent event){
+        //未知,可能是paper独有
+//    public void PlayerOnSpeak(AsyncChatEvent event){
+
+//        System.out.println("1");
         Player player =event.getPlayer();
         if(event.isCancelled()||player.isOp()){
+
+//            System.out.println("12");
             return;
         }
 
         if(PlayerToChatMessage.get(player)!=null){
+
+//            System.out.println("13");
             event.setCancelled(true);
             player.sendMessage(NotSpeakMessage);
         }else {
-            PlayerToChatMessage.put(player,event.getMessage());
+//            PlayerToChatMessage.put(player,event.getMessage());
+            PlayerToChatMessage.put(player," ");
             if(IsFoliaServer){
                 player.getScheduler().runDelayed(main, new Consumer<ScheduledTask>() {
                     @Override
@@ -57,9 +71,13 @@ public class QuickSpeakListener implements Listener {
                     }
                 }, () -> main.getLogger().info("Error,Player is null"),(long) (20*Time));
             }else {
+
+//                System.out.println("14");
                 new BukkitRunnable(){
                     @Override
                     public void run() {
+
+//                        System.out.println("15");
                         PlayerToChatMessage.remove(player);
                     }
                 }.runTaskLater(WorldListTrashCan.main, (long) (20*Time));

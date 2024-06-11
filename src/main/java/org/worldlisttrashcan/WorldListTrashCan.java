@@ -160,7 +160,7 @@ public final class WorldListTrashCan extends JavaPlugin {
         IsFoliaServer = Bukkit.getServer().getVersion().contains("Folia");
         IsFoliaServer = getConfig().getBoolean("IsFoliaServer");
 //        System.out.println("Bukkit.getServer().getVersion().contains "+Bukkit.getServer().getVersion());
-        IsPaperSever = Bukkit.getServer().getVersion().contains("Paper");
+        IsPaperServer = Bukkit.getServer().getVersion().contains("Paper");
 
 
         if (!setupEconomy() ) {
@@ -180,7 +180,7 @@ public final class WorldListTrashCan extends JavaPlugin {
 
 
         //警告：folia服务器只能用上面的，不能用bukkit延时任务来检查密集实体
-        if((IsPaperSever&&!compareVersions("1.13.0"))|| IsFoliaServer){
+        if((IsPaperServer &&!compareVersions("1.13.0"))|| IsFoliaServer){
 //            System.out.println("1");
             Bukkit.getPluginManager().registerEvents(new PaperEntityMoveEvent(), this);
         }else {

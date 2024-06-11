@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.papermc.paper.event.entity.EntityMoveEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -14,14 +13,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityTeleportEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.worldlisttrashcan.message;
 
-import static org.worldlisttrashcan.IsVersion.IsPaperSever;
 import static org.worldlisttrashcan.WorldLimitEntityCount.removeEntity.removeLivingEntity;
 import static org.worldlisttrashcan.WorldListTrashCan.UseEntityBarPlayerList;
-import static org.worldlisttrashcan.WorldListTrashCan.main;
 
 /* loaded from: 限制世界实体数量，最终版 - 副本.jar:org/example9/javafirstplugin/Main.class */
 public class LimitMain implements Listener {
