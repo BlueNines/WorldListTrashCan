@@ -1,15 +1,11 @@
 package org.worldlisttrashcan.WorldLimitEntityCount;
 
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.worldlisttrashcan.message;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
+import org.worldlisttrashcan.message;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +24,7 @@ public class removeEntity {
 
 
 
-    public void dealEntity(Entity entity){
+    public static void dealEntity(Entity entity){
         EntityType entityType = entity.getType();
 
         int limit = GatherLimits.get(entityType.name())[0];
