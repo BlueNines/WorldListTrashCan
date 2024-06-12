@@ -15,6 +15,7 @@ import java.util.List;
 import static org.worldlisttrashcan.WorldLimitEntityCount.LimitMain.*;
 import static org.worldlisttrashcan.WorldLimitEntityCount.removeEntity.removeLivingEntity;
 
+
 public class PaperEntityMoveEvent implements Listener {
     @EventHandler
     public void EntityMoveEvent(EntityMoveEvent event){
@@ -24,6 +25,10 @@ public class PaperEntityMoveEvent implements Listener {
 //            System.out.println("GatherLimits "+GatherLimits.toString());
 //            System.out.println("GatherBanWorlds "+GatherBanWorlds.toString());
             Entity entity = event.getEntity();
+
+
+
+
             String worldName = entity.getWorld().getName();
             EntityType entityType = entity.getType();
 //            for (String s : GatherLimits.keySet()) {
@@ -39,7 +44,7 @@ public class PaperEntityMoveEvent implements Listener {
                 List<Entity> entityList = new ArrayList<>();
                 List<Player> PlayerList = new ArrayList<>();
 
-                for (Entity NearEntity : event.getEntity().getNearbyEntities(range, range, range)) {
+                for (Entity NearEntity : entity.getNearbyEntities(range, range, range)) {
                     if(NearEntity.getType() == entity.getType()){
                         entityList.add(NearEntity);
                     }
@@ -61,6 +66,8 @@ public class PaperEntityMoveEvent implements Listener {
                     if(clearCount>size){
                         clearCount = size;
                     }
+
+
                     for (int i = 0 ;i<clearCount;i++) {
                         Entity entity1 = entityList.get(i);
                         if(entity1 instanceof LivingEntity){

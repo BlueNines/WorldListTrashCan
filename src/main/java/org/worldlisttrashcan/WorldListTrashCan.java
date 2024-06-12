@@ -18,6 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.worldlisttrashcan.AutoTrashMain.AutoTrashListener;
 import org.worldlisttrashcan.DropSystem.DropLimitListener;
+
 import org.worldlisttrashcan.SimpleChange.NotPickArrowListener;
 import org.worldlisttrashcan.SpeakSystem.QuickSpeakListener;
 import org.worldlisttrashcan.SpeakSystem.QuickUseCommandListener;
@@ -44,6 +45,9 @@ import static org.worldlisttrashcan.message.chanceMessage;
 public final class WorldListTrashCan extends JavaPlugin {
 
     public static Plugin main;
+
+
+
     public static WorldListTrashCan worldListTrashCan;
 
     ClearItemsTask clearItemsTask;
@@ -158,7 +162,7 @@ public final class WorldListTrashCan extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new TrashListener(), this);
         Bukkit.getPluginManager().registerEvents(new GuiListener(), this);
         IsFoliaServer = Bukkit.getServer().getVersion().contains("Folia");
-        IsFoliaServer = getConfig().getBoolean("IsFoliaServer");
+
 //        System.out.println("Bukkit.getServer().getVersion().contains "+Bukkit.getServer().getVersion());
         IsPaperServer = Bukkit.getServer().getVersion().contains("Paper");
 
@@ -175,6 +179,7 @@ public final class WorldListTrashCan extends JavaPlugin {
 
         reload();
 //        Bukkit.getPluginManager().registerEvents(new LimitMain(), this);
+        //限制整个世界的实体数量的监听器类
         LimitMain limitMain = new LimitMain();
         Bukkit.getPluginManager().registerEvents(limitMain, this);
 
@@ -545,6 +550,8 @@ public final class WorldListTrashCan extends JavaPlugin {
 //        AllMessageLoad();
 //        chanceMessage = getConfig().getString("Set.Lang");
 //        message.reloadMessage();
+
+        IsFoliaServer = getConfig().getBoolean("IsFoliaServer");
         GlobalItemSetString = new HashSet<>(main.getConfig().getStringList("GlobalBanItem"));
         int MaxCount = main.getConfig().getInt("Set.GlobalTrash.MaxPage");
         globalTrashGui = new GlobalTrashGui(GlobalTrashList,MaxCount);
