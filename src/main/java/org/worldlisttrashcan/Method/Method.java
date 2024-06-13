@@ -2,8 +2,10 @@ package org.worldlisttrashcan.Method;
 
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.worldlisttrashcan.message;
 
 import static org.worldlisttrashcan.WorldListTrashCan.main;
+import static org.worldlisttrashcan.message.consoleSay;
 
 public class Method {
     /**
@@ -25,7 +27,8 @@ public class Method {
         // 插件启动逻辑
         if (isClassPresent("io.papermc.paper.threadedregions.scheduler.FoliaRegionScheduler")) {
 //            Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN+"检测到服务器拥有Folia的API，正在适用目前最佳的方法");
-            main.getLogger().severe(ChatColor.GREEN+"检测到服务器拥有Folia的API，正在适用目前最佳的方法");
+//            Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN+"检测到服务器拥有Folia的API，正在适用目前最佳的方法");
+            message.consoleSay("&a检测到服务器拥有Folia的API，正在适用目前最佳的方法");
             return true;
 
         } else {
@@ -40,7 +43,7 @@ public class Method {
         // 插件启动逻辑
         if (isClassPresent("io.papermc.paper.event.entity.EntityMoveEvent")) {
 //            Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN+"检测到服务器拥有Paper的API，正在适用目前最佳的方法");
-            main.getLogger().severe(ChatColor.GREEN+"检测到服务器拥有Paper的API，正在适用目前最佳的方法");
+            message.consoleSay("&a检测到服务器拥有Paper的API，正在适用目前最佳的方法");
             return true;
 
         } else {

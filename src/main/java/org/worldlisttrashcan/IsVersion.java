@@ -17,6 +17,9 @@ public class IsVersion {
 
 
     public static Map<String,Boolean> VersionToBoolean = new HashMap<>();
+
+    //如果版本小于1.13.0
+    //compareVersions("1.13.0")
     public static boolean compareVersions(String version) {
         if(VersionToBoolean.get(version)==null){
             String string = Bukkit.getVersion();
