@@ -39,8 +39,7 @@ import static org.worldlisttrashcan.IsVersion.*;
 import static org.worldlisttrashcan.TrashMain.TrashListener.GlobalItemSetString;
 import static org.worldlisttrashcan.WorldLimitEntityCount.LimitMain.*;
 import static org.worldlisttrashcan.WorldLimitEntityCount.removeEntity.ItemDropFlag;
-import static org.worldlisttrashcan.message.AllMessageLoad;
-import static org.worldlisttrashcan.message.chanceMessage;
+import static org.worldlisttrashcan.message.*;
 
 public final class WorldListTrashCan extends JavaPlugin {
 
@@ -514,19 +513,19 @@ public final class WorldListTrashCan extends JavaPlugin {
         // Plugin shutdown logic
     }
 
-    public static void ConfigStringReplace(ConfigurationSection config, String target, String replacement) {
-        for (String key : config.getKeys(false)) {
-            if (config.isConfigurationSection(key)) {
-                // 递归处理子节
-                ConfigStringReplace(config.getConfigurationSection(key), target, replacement);
-            } else if (config.isString(key)) {
-                // 替换字符串值
-                String originalValue = config.getString(key);
-                String modifiedValue = originalValue.replace(target, replacement);
-                config.set(key, modifiedValue);
-            }
-        }
-    }
+//    public static void ConfigStringReplace(ConfigurationSection config, String target, String replacement) {
+//        for (String key : config.getKeys(false)) {
+//            if (config.isConfigurationSection(key)) {
+//                // 递归处理子节
+//                ConfigStringReplace(config.getConfigurationSection(key), target, replacement);
+//            } else if (config.isString(key)) {
+//                // 替换字符串值
+//                String originalValue = config.getString(key);
+//                String modifiedValue = originalValue.replace(target, replacement);
+//                config.set(key, modifiedValue);
+//            }
+//        }
+//    }
 
 
 
@@ -540,7 +539,10 @@ public final class WorldListTrashCan extends JavaPlugin {
 
         saveDefaultConfig();
         reloadConfig();
-        ConfigStringReplace(getConfig(),"&","§");
+
+
+        //支持RGB
+        ConfigStringReplace(getConfig());
 
         AllMessageLoad();
         chanceMessage = getConfig().getString("Set.Lang");

@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.worldlisttrashcan.WorldListTrashCan.*;
 
@@ -30,6 +32,10 @@ public class message {
     }
 
 
+
+
+
+
     static public String chanceMessage;
     public static void reloadMessage() {
         //new File(main.getDataFolder(), "data" + File.separator + "data.yml");
@@ -37,13 +43,65 @@ public class message {
         if (!messageFile.exists())
             main.saveResource("message"+ File.separator +chanceMessage, false);
         Message = YamlConfiguration.loadConfiguration(messageFile);
-        ConfigStringReplace(message.getConfig(),"&","§");
+
+//        ConfigStringReplace(message.getConfig(),"&","§");
+
+
+
+
+
         ConfigStringReplace(message.getConfig(),"%PluginTitle%",message.find("PluginTitle"));
 //        message.saveData();
 
     }
 
 
+
+    public static void ConfigStringReplace(ConfigurationSection config, String target, String replacement) {
+        for (String key : config.getKeys(false)) {
+            if (config.isConfigurationSection(key)) {
+                // 递归处理子节
+                ConfigStringReplace(config.getConfigurationSection(key), target, replacement);
+            } else if (config.isString(key)) {
+                // 替换字符串值
+                String originalValue = config.getString(key);
+                String modifiedValue = color(originalValue.replace(target, replacement));
+                config.set(key, modifiedValue);
+            }
+        }
+    }
+
+    public static void ConfigStringReplace(ConfigurationSection config) {
+        for (String key : config.getKeys(false)) {
+            if (config.isConfigurationSection(key)) {
+                // 递归处理子节
+                ConfigStringReplace(config.getConfigurationSection(key));
+            } else if (config.isString(key)) {
+                // 替换字符串值
+                String originalValue = config.getString(key);
+                String modifiedValue = color(originalValue);
+                config.set(key, modifiedValue);
+            }
+        }
+    }
+
+    public static String color(String msg) {
+        msg = msg.replaceAll("&#", "#");
+        Pattern pattern = Pattern.compile("(&#|#|&)[a-fA-F0-9]{6}");
+        Matcher matcher = pattern.matcher(msg);
+        while (matcher.find()) {
+            String hexCode = msg.substring(matcher.start(), matcher.end());
+            String replaceAmp = hexCode.replaceAll("&#", "x");
+            String replaceSharp = replaceAmp.replace('#', 'x');
+            char[] ch = replaceSharp.toCharArray();
+            StringBuilder builder = new StringBuilder();
+            for (char c : ch)
+                builder.append("&" + c);
+            msg = msg.replace(hexCode, builder.toString());
+            matcher = pattern.matcher(msg);
+        }
+        return ChatColor.translateAlternateColorCodes('&', msg);
+    }
 
     public static void AllMessageLoad(){
         List<String> LangList = new ArrayList<>();
