@@ -1,4 +1,4 @@
-IsFoliaServer: false
+
 Set:
   Debug: false
   Lang: message_zh.yml
@@ -34,8 +34,10 @@ Set:
   #每次执行的垃圾清理的间隔
   SecondCount: 360
   #玩家创建垃圾桶需要输入的字段
-  SighCheckName: "[垃圾桶]"
+  SighCheckName: "[世界垃圾桶]"
   #创建垃圾桶成功后替换的字段
+  #这里在插件4.9.0版本过后就可以使用RGB颜色了！
+  #注意。只能在1.16.5以上版本使用RGB颜色，请勿在1.16.5以下使用，可能会导致世界垃圾桶无法正常检查字段
   SighCheckedName: "&b[&c世界垃圾桶&b]"
   #包含以下物品类型的（用wtc look也可以查看手持物品类型）
   NoClearContainerType:

@@ -36,6 +36,8 @@ import java.util.function.Consumer;
 import static org.worldlisttrashcan.AutoTrashMain.AutoTrashListener.OriginalFeatureClearItemAddGlobalTrashModel;
 import static org.worldlisttrashcan.DropSystem.DropLimitListener.PlayerDropList;
 import static org.worldlisttrashcan.IsVersion.*;
+import static org.worldlisttrashcan.Method.Method.AutoCheckFoliaServer;
+import static org.worldlisttrashcan.Method.Method.AutoCheckPaperServer;
 import static org.worldlisttrashcan.TrashMain.TrashListener.GlobalItemSetString;
 import static org.worldlisttrashcan.WorldLimitEntityCount.LimitMain.*;
 import static org.worldlisttrashcan.WorldLimitEntityCount.removeEntity.ItemDropFlag;
@@ -160,14 +162,18 @@ public final class WorldListTrashCan extends JavaPlugin {
         worldListTrashCan = this;
         Bukkit.getPluginManager().registerEvents(new TrashListener(), this);
         Bukkit.getPluginManager().registerEvents(new GuiListener(), this);
-        IsFoliaServer = Bukkit.getServer().getVersion().contains("Folia");
+//        IsFoliaServer = Bukkit.getServer().getVersion().contains("Folia");
+        IsFoliaServer = AutoCheckFoliaServer();
+
+
 
 //        System.out.println("Bukkit.getServer().getVersion().contains "+Bukkit.getServer().getVersion());
-        IsPaperServer = Bukkit.getServer().getVersion().contains("Paper");
+//        IsPaperServer = Bukkit.getServer().getVersion().contains("Paper");
+        IsPaperServer = AutoCheckPaperServer();
 
 
         if (!setupEconomy() ) {
-            getLogger().severe(String.format("[%s] - 没有找到Vault插件，已自动关闭相关功能", getDescription().getName()));
+            getLogger().severe(String.format("没有找到Vault插件，已自动关闭相关功能"));
 //            getServer().getPluginManager().disablePlugin(this);
 //            return;
         }else {
@@ -237,7 +243,7 @@ public final class WorldListTrashCan extends JavaPlugin {
 //                sender.sendMessage("§6/WorldListTrashCan add [世界名] <数量>"+"§d设置世界名垃圾桶最大数量(不填则为脚下世界)");
                 if(sender.hasPermission("WorldListTrashCan.help")||sender.isOp()){
                     for (String string : message.getConfig().getStringList("HelpTitle")) {
-                        sender.sendMessage(string.replace("&","§"));
+                        sender.sendMessage(color(string));
                     }
                 }else {
                     sender.sendMessage(message.find("NotHavePermission").replace("%permission%","WorldListTrashCan.help"));
@@ -553,7 +559,12 @@ public final class WorldListTrashCan extends JavaPlugin {
 //        chanceMessage = getConfig().getString("Set.Lang");
 //        message.reloadMessage();
 
-        IsFoliaServer = getConfig().getBoolean("IsFoliaServer");
+
+
+
+//        IsFoliaServer = getConfig().getBoolean("IsFoliaServer");
+
+
         GlobalItemSetString = new HashSet<>(main.getConfig().getStringList("GlobalBanItem"));
         int MaxCount = main.getConfig().getInt("Set.GlobalTrash.MaxPage");
         globalTrashGui = new GlobalTrashGui(GlobalTrashList,MaxCount);
@@ -682,13 +693,13 @@ public final class WorldListTrashCan extends JavaPlugin {
                 if (entityType == null) {
                     //EntityCountSetOK: "%PluginTitle% 成功设置各世界该 %Entity% 实体默认为 %Count% 个"
                     //EntityCountSetError: "%PluginTitle% 实体类型错误！可选的实体类型包括：%EntityTypes%"
-                    main.getLogger().info(message.find("EntityCountSetError").replace("%EntityName%",strings[0]).replace("%EntityTypes%",getEntityTypes()));
+                    main.getLogger().severe(message.find("EntityCountSetError").replace("%EntityName%",strings[0]).replace("%EntityTypes%",getEntityTypes()));
                     continue;
                 }
                 int limit = Integer.parseInt(strings[1]);
                 worldLimits.put(entityType.name(), limit);
 //            main.getLogger().info(ChatColor.GREEN + "成功设置 " + entityType.name() + " 的数量限制为 " + limit);
-                main.getLogger().info(message.find("EntityCountSetOK").replace("%Count%",limit+"").replace("%Entity%",entityType.name()));
+                main.getLogger().severe(message.find("EntityCountSetOK").replace("%Count%",limit+"").replace("%Entity%",entityType.name()));
             }
             BanWorlds.addAll(main.getConfig().getStringList("WorldEntityLimitCount.BanWorldNameList"));
         }

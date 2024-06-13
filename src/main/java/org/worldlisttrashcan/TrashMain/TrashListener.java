@@ -155,8 +155,10 @@ public class TrashListener implements Listener {
     public void onSignChange(SignChangeEvent event) {
 
         // 获取放置告示牌的玩家
-        String playerName = event.getPlayer().getName();
         Player player = event.getPlayer();
+        if (!player.hasPermission("WorldListTrashCan.Main")) {
+            return;
+        }
         if (main.getConfig().getBoolean("Set.Debug")) {
             main.getLogger().info("告示牌子ID为"+event.getBlock().getData());
             main.getLogger().info("告示牌type为"+event.getBlock().getType());

@@ -19,6 +19,7 @@ import java.util.*;
 
 import static org.worldlisttrashcan.TrashMain.TrashListener.GlobalItemSetString;
 import static org.worldlisttrashcan.WorldListTrashCan.*;
+import static org.worldlisttrashcan.message.color;
 //import static org.worldlisttrashcan.TrashMain.getInventory.getState;
 
 public class ClearItemsTask {
@@ -67,13 +68,13 @@ public class ClearItemsTask {
         Map<Integer,String> ChatIntToMessage = new HashMap<>();
         for (String message : main.getConfig().getStringList("Set.ChatMessageForCount")) {
             String[] strings= message.split(";");
-            ChatIntToMessage.put(Integer.parseInt(strings[0]),strings[1].replace("&","§"));
+            ChatIntToMessage.put(Integer.parseInt(strings[0]),color(strings[1]));
         }
 
         Map<Integer,String> ActionBarIntToMessage = new HashMap<>();
         for (String message : main.getConfig().getStringList("Set.ActionBarMessageForCount")) {
             String[] strings= message.split(";");
-            ActionBarIntToMessage.put(Integer.parseInt(strings[0]),strings[1].replace("&","§"));
+            ActionBarIntToMessage.put(Integer.parseInt(strings[0]),color(strings[1]));
         }
 
 //        //test
@@ -87,9 +88,9 @@ public class ClearItemsTask {
         for (String message : main.getConfig().getStringList("Set.TitleMessageForCount")) {
             String[] strings= message.split(";");
             if(strings.length>2){
-                TitleIntToMessage.put(Integer.parseInt(strings[0]),strings[1].replace("&","§")+";"+strings[2].replace("&","§"));
+                TitleIntToMessage.put(Integer.parseInt(strings[0]),color(strings[1])+";"+color(strings[2]));
             }else {
-                TitleIntToMessage.put(Integer.parseInt(strings[0]),strings[1].replace("&","§"));
+                TitleIntToMessage.put(Integer.parseInt(strings[0]),color(strings[1]));
 
             }
 
