@@ -63,7 +63,7 @@ HelpTitle:
   - "&6/WorldListTrashCan help &d查看帮助"
   - "&6/WorldListTrashCan reload &d重载插件"
   - "&6/WorldListTrashCan ban &d打开本世界垃圾黑名单Gui"
-  - "&6/WorldListTrashCan look &d右键查看实体类型"
+  - "&6/WorldListTrashCan look &d右键查看实体类型 (并且会显示当前区块的所有实体类型列表)"
   - "&6/WorldListTrashCan GlobalBan &d打开全局世界垃圾黑名单Gui"
   - "&6/WorldListTrashCan add [世界名] <数量> &d设置世界名垃圾桶最大数量(不填则为脚下世界)"
   - "&6/WorldListTrashCan DropMode &d打开或关闭物品丢弃模式"

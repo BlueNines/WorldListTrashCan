@@ -28,6 +28,7 @@ org\worldlisttrashcan\SpeakSystem\QuickUseCommandListener.class
 org\worldlisttrashcan\WorldLimitEntityCount\BukkitClearGatherEntityTask.class
 org\worldlisttrashcan\TrashMain\getInventory.class
 org\worldlisttrashcan\WorldLimitEntityCount\removeEntity.class
+org\worldlisttrashcan\Method\SendMessageAbstract.class
 org\worldlisttrashcan\SpeakSystem\QuickSpeakListener$2.class
 org\worldlisttrashcan\TrashMain\GuiListener.class
 org\worldlisttrashcan\WorldListTrashCan$2.class

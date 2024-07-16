@@ -1,6 +1,8 @@
 package org.worldlisttrashcan;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -8,6 +10,7 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -19,6 +22,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.worldlisttrashcan.AutoTrashMain.AutoTrashListener;
 import org.worldlisttrashcan.DropSystem.DropLimitListener;
 
+import org.worldlisttrashcan.Method.SendMessageAbstract;
 import org.worldlisttrashcan.SimpleChange.NotPickArrowListener;
 import org.worldlisttrashcan.SpeakSystem.QuickSpeakListener;
 import org.worldlisttrashcan.SpeakSystem.QuickUseCommandListener;
@@ -59,7 +63,7 @@ public final class WorldListTrashCan extends JavaPlugin {
 //    public static GlobalTrashGui globalTrashGui;
 
 
-
+    public static SendMessageAbstract sendMessageAbstract;
     //公共垃圾桶
     public static List<Inventory> GlobalTrashList = new ArrayList<>();
 
@@ -103,8 +107,11 @@ public final class WorldListTrashCan extends JavaPlugin {
         if (command.getName().equalsIgnoreCase("WorldListTrashCan")||command.getName().equalsIgnoreCase("wtc")) {
             if (args.length == 1) {
                 // 如果输入的是第一个参数，提供一些补全建议
+                String partial = args[0].toLowerCase();
                 for (String subCommand : allSubCommands) {
-                    completions.add(subCommand.toLowerCase());
+                    if (subCommand.toLowerCase().startsWith(partial)) {
+                        completions.add(subCommand.toLowerCase());
+                    }
                 }
 //                completions.add("PlayerTrash");
 //                completions.add("DropMode");
@@ -172,6 +179,14 @@ public final class WorldListTrashCan extends JavaPlugin {
         IsPaperServer = AutoCheckPaperServer();
 
 
+        Is1_12_1_16Server = compareVersions("1.16.0");
+
+//        System.out.println("Is1_12_1_16Server "+Is1_12_1_16Server);
+
+
+        Is1_16_1_20Server = !compareVersions("1.16.0");
+
+//        System.out.println("Is1_16_1_20Server "+Is1_16_1_20Server);
         if (!setupEconomy() ) {
             message.consoleSay("&c没有找到Vault插件，已自动关闭相关功能");
 //            getServer().getPluginManager().disablePlugin(this);
@@ -183,6 +198,9 @@ public final class WorldListTrashCan extends JavaPlugin {
 
 
         reload();
+
+        sendMessageAbstract = new SendMessageAbstract((JavaPlugin) main);
+
 //        Bukkit.getPluginManager().registerEvents(new LimitMain(), this);
         //限制整个世界的实体数量的监听器类
         LimitMain limitMain = new LimitMain();
@@ -418,6 +436,20 @@ public final class WorldListTrashCan extends JavaPlugin {
                     if (sender.hasPermission("WorldListTrashCan.Look")||sender.isOp()) {
                         Player player = ((Player) sender).getPlayer();
                         UseEntityBarPlayerList.add(player);
+
+                        message.consoleSay(sender,"Entity Type List");
+
+                        for (Entity entity : player.getChunk().getEntities()) {
+                            String typename = entity.getType().name();
+//                            message.consoleSay(sender,"- "+typename);
+                            TextComponent clipboardMessage = new TextComponent("- "+typename);
+                            clipboardMessage.setColor(net.md_5.bungee.api.ChatColor.GREEN);
+                            // 设置点击事件，点击后复制到聊天框
+                            clipboardMessage.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, typename));
+                            // 发送消息给玩家
+                            player.spigot().sendMessage(clipboardMessage);
+                        }
+
                         player.sendMessage(message.find("PleaseRightEntity"));
                     }else {
                         sender.sendMessage(message.find("NotHavePermission").replace("%permission%","WorldListTrashCan.Look"));

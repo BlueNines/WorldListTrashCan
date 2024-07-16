@@ -1,10 +1,16 @@
 package org.worldlisttrashcan;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.worldlisttrashcan.Method.SendMessageAbstract;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,6 +75,14 @@ public class message {
     public static void consoleSay(String message){
         Bukkit.getConsoleSender().sendMessage(color(pluginTitle+" "+message));
     }
+    public static void consoleSay(CommandSender commandSender, String message) {
+        if (commandSender == null) {
+            Bukkit.getConsoleSender().sendMessage(color( message.replace("%PluginTitle%",pluginTitle)));
+        } else {
+            commandSender.sendMessage(color( message.replace("%PluginTitle%",pluginTitle)));
+        }
+
+    }
 
 
 
@@ -108,6 +122,9 @@ public class message {
             String hexCode = msg.substring(matcher.start(), matcher.end());
             String replaceAmp = hexCode.replaceAll("&#", "x");
             String replaceSharp = replaceAmp.replace('#', 'x');
+
+
+
             char[] ch = replaceSharp.toCharArray();
             StringBuilder builder = new StringBuilder();
             for (char c : ch)
@@ -116,6 +133,27 @@ public class message {
             matcher = pattern.matcher(msg);
         }
         return ChatColor.translateAlternateColorCodes('&', msg);
+    }
+    public static Component color(String msg,boolean b) {
+        // 正则表达式匹配颜色代码和文本片段
+        Pattern pattern = Pattern.compile("(&#[0-9a-fA-F]{6})([^&]*)");
+        Matcher matcher = pattern.matcher(msg);
+
+        // 创建一个组件构建器
+        Component component = Component.empty();
+
+        while (matcher.find()) {
+            String colorCode = matcher.group(1).substring(1); // 提取颜色代码并去掉&
+            String text = matcher.group(2); // 提取文本片段
+
+            // 生成颜色并应用到文本片段上
+            TextColor color = TextColor.fromHexString(colorCode);
+            Component coloredText = Component.text(text, Style.style(color));
+
+            // 将有颜色的文本片段添加到组件中
+            component = component.append(coloredText);
+        }
+        return component;
     }
 
     public static void AllMessageLoad(){

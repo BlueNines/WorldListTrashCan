@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -275,6 +278,33 @@ public class LimitMain implements Listener {
 //                System.out.println("13");
                 String typename = entity.getType().name();
                 player.sendMessage(message.find("ClickFindEntityType").replace("%EntityType%",typename));
+
+
+
+
+                //点击复制事件
+
+                // 创建一个消息组件
+//                TextComponent commandMessage = new TextComponent("点击这里执行指令");
+//                commandMessage.setColor(ChatColor.AQUA);
+
+                // 设置点击事件，点击后执行指令
+//                commandMessage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/exampleCommand"));
+
+                // 发送消息给玩家
+//                player.spigot().sendMessage(commandMessage);
+
+                // 创建另一个消息组件
+                TextComponent clipboardMessage = new TextComponent("点击这里复制到聊天框");
+                clipboardMessage.setColor(ChatColor.GREEN);
+
+                // 设置点击事件，点击后复制到聊天框
+                clipboardMessage.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, typename));
+
+                // 发送消息给玩家
+                player.spigot().sendMessage(clipboardMessage);
+
+
 
                 UseEntityBarPlayerList.remove(player);
             }

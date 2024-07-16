@@ -63,7 +63,7 @@ HelpTitle:
   - "&6/WorldListTrashCan help &dView help"
   - "&6/WorldListTrashCan reload &dReload the plugin"
   - "&6/WorldListTrashCan ban &dOpen the local World Trash Can blacklist GUI"
-  - "&6/WorldListTrashCan look &dRight Look Entity Type"
+  - "&6/WorldListTrashCan look &dRight Look Entity Type(And it will display a list of all entity types for the current block)"
   - "&6/WorldListTrashCan GlobalBan &dOpen the global World Trash Can blacklist GUI"
   - "&6/WorldListTrashCan add [world name] <quantity> &dSet the maximum number of World Trash Cans for the world (defaults to the world at your feet)"
   - "&6/WorldListTrashCan DropMode &dOpen or Off DropMode"

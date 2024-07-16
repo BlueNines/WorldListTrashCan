@@ -1,7 +1,8 @@
 package org.worldlisttrashcan.TrashMain;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.*;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -11,12 +12,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.worldlisttrashcan.data;
 
-import static org.bukkit.entity.EntityType.WANDERING_TRADER;
-import static org.worldlisttrashcan.TrashMain.GlobalTrashGui.ClearContainer;
-import static org.worldlisttrashcan.WorldListTrashCan.main;
-
 import java.util.*;
 
+import static org.worldlisttrashcan.TrashMain.GlobalTrashGui.ClearContainer;
 import static org.worldlisttrashcan.TrashMain.TrashListener.GlobalItemSetString;
 import static org.worldlisttrashcan.WorldListTrashCan.*;
 import static org.worldlisttrashcan.message.color;
@@ -60,6 +58,10 @@ public class ClearItemsTask {
 
 
     public ClearItemsTask() {
+
+
+
+
         boolean ChatFlag = main.getConfig().getBoolean("Set.ChatFlag");
         boolean TitleFlag = main.getConfig().getBoolean("Set.TitleFlag");
         boolean ActionBarFlag = main.getConfig().getBoolean("Set.ActionBarFlag");
@@ -74,7 +76,8 @@ public class ClearItemsTask {
         Map<Integer,String> ActionBarIntToMessage = new HashMap<>();
         for (String message : main.getConfig().getStringList("Set.ActionBarMessageForCount")) {
             String[] strings= message.split(";");
-            ActionBarIntToMessage.put(Integer.parseInt(strings[0]),color(strings[1]));
+//            ActionBarIntToMessage.put(Integer.parseInt(strings[0]),color(strings[1]));
+            ActionBarIntToMessage.put(Integer.parseInt(strings[0]),strings[1]);
         }
 
 //        //test
@@ -136,13 +139,23 @@ public class ClearItemsTask {
 
                 if (ActionBarIntToMessage.containsKey(count) && ActionBarFlag) {
                     for (Player player : Bukkit.getOnlinePlayers()) {
-//                        Player player1 = (Player) player;
+                        Player player1 = (Player) player;
 
-                        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(
-                                ActionBarIntToMessage.get(count)
-                                        .replace("%ItemSum%", GlobalTrashItemSum + "")
-                                        .replace("%EntitySum%", EntitySum + "")
-                                        .replace("%ClearGlobalCount%", EveryClearGlobalTrash - ClearCount + "")));
+//                        sendMessageAbstract.sendActionBar(player, color(ActionBarIntToMessage.get(count)
+//                                .replace("%ItemSum%", GlobalTrashItemSum + "")
+//                                .replace("%EntitySum%", EntitySum + "")
+//                                .replace("%ClearGlobalCount%", EveryClearGlobalTrash - ClearCount + ""),true));
+
+                        sendMessageAbstract.sendActionBar(player,ActionBarIntToMessage.get(count)
+                                .replace("%ItemSum%", GlobalTrashItemSum + "")
+                                .replace("%EntitySum%", EntitySum + "")
+                                .replace("%ClearGlobalCount%", EveryClearGlobalTrash - ClearCount + ""));
+
+//                        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(
+//                                ActionBarIntToMessage.get(count)
+//                                        .replace("%ItemSum%", GlobalTrashItemSum + "")
+//                                        .replace("%EntitySum%", EntitySum + "")
+//                                        .replace("%ClearGlobalCount%", EveryClearGlobalTrash - ClearCount + "")));
 
                     }
                 }
@@ -152,7 +165,12 @@ public class ClearItemsTask {
                             String[] strings = TitleIntToMessage.get(count).split(";");
                             player.sendTitle(strings[0].replace("%ItemSum%", GlobalTrashItemSum + "").replace("%EntitySum%", EntitySum + "").replace("%ClearGlobalCount%", EveryClearGlobalTrash - ClearCount + ""),
                                     strings[1].replace("%ItemSum%", GlobalTrashItemSum + "").replace("%EntitySum%", EntitySum + "").replace("%ClearGlobalCount%", EveryClearGlobalTrash - ClearCount + ""), 10, 70, 20);
+
+
+
                         } else {
+
+
                             player.sendTitle(TitleIntToMessage.get(count).replace("%ItemSum%", GlobalTrashItemSum + "").replace("%EntitySum%", EntitySum + "").replace("%ClearGlobalCount%", EveryClearGlobalTrash - ClearCount + ""), "", 10, 70, 20);
                         }
 
@@ -415,6 +433,10 @@ public class ClearItemsTask {
     public void Stop(){
         bukkitRunnable.cancel();
     }
+
+
+
+
 
 
 }

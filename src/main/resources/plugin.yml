@@ -1,5 +1,5 @@
 name: WorldListTrashCan
-version: '5.0.0'
+version: '5.0.5'
 main: org.worldlisttrashcan.WorldListTrashCan
 author: BlueNine QQ 2831508831
 api-version: '1.13'

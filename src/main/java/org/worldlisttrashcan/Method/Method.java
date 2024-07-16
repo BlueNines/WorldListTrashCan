@@ -6,15 +6,30 @@ import org.worldlisttrashcan.message;
 
 import static org.worldlisttrashcan.WorldListTrashCan.main;
 import static org.worldlisttrashcan.message.consoleSay;
-
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 public class Method {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * 检查类是否存在
      *
      * @param className 要检查的类的全限定名
      * @return 如果类存在，则返回 true，否则返回 false
      */
-    private static boolean isClassPresent(String className) {
+    public static boolean isClassPresent(String className) {
         try {
             Class.forName(className);
             return true;
@@ -52,4 +67,6 @@ public class Method {
 
         return false;
     }
+
+
 }

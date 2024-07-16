@@ -65,7 +65,7 @@ HelpTitle:
   - "&#ccffbb/WorldListTrashCan help &#FFB5C5查看帮助"
   - "&#ccffbb/WorldListTrashCan reload &#FFB5C5重载插件"
   - "&#ccffbb/WorldListTrashCan ban &#FFB5C5打开本世界垃圾黑名单Gui"
-  - "&#ccffbb/WorldListTrashCan look &#FFB5C5右键查看实体类型"
+  - "&#ccffbb/WorldListTrashCan look &#FFB5C5右键查看实体类型 (并且会显示当前区块的所有实体类型列表)"
   - "&#ccffbb/WorldListTrashCan GlobalBan &#FFB5C5打开全局世界垃圾黑名单Gui"
   - "&#ccffbb/WorldListTrashCan add [世界名] <数量> &#FFB5C5设置世界名垃圾桶最大数量(不填则为脚下世界)"
   - "&#ccffbb/WorldListTrashCan DropMode &#FFB5C5打开或关闭物品丢弃模式"

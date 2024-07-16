@@ -1,3 +1,7 @@
+#如果你使用的是1.16.5以上支持RGB颜色的服务器
+#以下的所有带字符串的配置均可设置为RGB颜色
+#格式为   &#FFB5C5 I am RGBColor
+
 
 Set:
   Debug: false
@@ -33,6 +37,7 @@ Set:
 
   #每次执行的垃圾清理的间隔
   SecondCount: 360
+  #如果你想关闭这个功能，可以在权限组插件中禁用默认自带的WorldTrashCan.Main权限，玩家就无法创建世界垃圾桶了
   #玩家创建垃圾桶需要输入的字段
   SighCheckName: "[世界垃圾桶]"
   #创建垃圾桶成功后替换的字段
@@ -70,6 +75,7 @@ Set:
 
 
   #是否启用ActionBar的提示方式(经验条上面的提示字)
+  #原版本身不支持在ActionBar上使用RGB(如果你找到了其他作者使用了非材质包实现的RGB请call我，我会光速更新)
   ActionBarFlag: true
   ActionBarMessageForCount:
     - 60;&d&l还剩下 60 秒清理物品和实体

@@ -1,8 +1,6 @@
 package org.worldlisttrashcan.TrashMain;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -75,7 +73,7 @@ public class FoliaClearItemsTask {
         Map<Integer,String> ActionBarIntToMessage = new HashMap<>();
         for (String message : main.getConfig().getStringList("Set.ActionBarMessageForCount")) {
             String[] strings= message.split(";");
-            ActionBarIntToMessage.put(Integer.parseInt(strings[0]),color(strings[1]));
+            ActionBarIntToMessage.put(Integer.parseInt(strings[0]),strings[1]);
         }
 
         Map<Integer,String> TitleIntToMessage = new HashMap<>();
@@ -129,8 +127,13 @@ public class FoliaClearItemsTask {
                     }
                     if (ActionBarFlag){
                         for (Player player : Bukkit.getOnlinePlayers()) {
-//                        Player player1 = (Player) player;
-                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ActionBarIntToMessage.get(count).replace("%ItemSum%",GlobalTrashItemSum+"").replace("%EntitySum%",EntitySum+"").replace("%ClearGlobalCount%",EveryClearGlobalTrash-ClearCount+"")));
+//                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ActionBarIntToMessage.get(count).replace("%ItemSum%",GlobalTrashItemSum+"").replace("%EntitySum%",EntitySum+"").replace("%ClearGlobalCount%",EveryClearGlobalTrash-ClearCount+"")));
+                            sendMessageAbstract.sendActionBar(player,ActionBarIntToMessage.get(count)
+                                    .replace("%ItemSum%", GlobalTrashItemSum + "")
+                                    .replace("%EntitySum%", EntitySum + "")
+                                    .replace("%ClearGlobalCount%", EveryClearGlobalTrash - ClearCount + ""));
+
+
 
                         }
                     }

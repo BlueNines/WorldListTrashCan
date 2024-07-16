@@ -58,6 +58,10 @@ public class removeEntity {
             }
 
 
+            //在这里添加死实体和活实体的不同处理，活实体应该按照血量进行排序，死实体则不需要
+
+
+
             for (int i = 0 ;i<clearCount;i++) {
                 org.bukkit.entity.Entity entity1 = entityList.get(i);
                 if(entity1 instanceof LivingEntity){
