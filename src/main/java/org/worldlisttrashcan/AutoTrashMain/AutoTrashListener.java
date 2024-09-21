@@ -3,6 +3,7 @@ package org.worldlisttrashcan.AutoTrashMain;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -13,7 +14,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 import org.worldlisttrashcan.message;
 
 import java.text.DecimalFormat;
@@ -21,12 +25,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.worldlisttrashcan.IsVersion.IsFoliaServer;
+import static org.worldlisttrashcan.IsVersion.compareVersions;
 import static org.worldlisttrashcan.WorldListTrashCan.*;
 
 public class AutoTrashListener implements Listener {
 
     public static int OriginalFeatureClearItemAddGlobalTrashModel;
-
+    public static Boolean NoWorldTrashCanEnterPersonalTrashCan;
 
     public static Map<Player,Inventory> PlayerToInventory = new HashMap<>();
 
@@ -35,6 +40,13 @@ public class AutoTrashListener implements Listener {
 
     public Map<Player, Inventory> getPlayerToInventory() {
         return PlayerToInventory;
+    }
+
+    public static Boolean VersionFlag = false;
+
+    public AutoTrashListener(){
+        VersionFlag = !compareVersions("1.14.0");
+//        VersionFlag = true;
     }
 
 
@@ -55,7 +67,7 @@ public class AutoTrashListener implements Listener {
 
 
 
-            double Coins = main.getConfig().getDouble("Set.GlobalTrash.OriginalFeatureClearItemAddGlobalTrash.Model2.Coins");
+            double Coins = main.getConfig().getDouble("Set.PersonalTrashCan.OriginalFeatureClearItemAddGlobalTrash.Model2.Coins");
 
 
             //拖动的物品
@@ -68,7 +80,7 @@ public class AutoTrashListener implements Listener {
 
 
 //            System.out.println("1");
-            if(main.getConfig().getDouble("Set.GlobalTrash.OriginalFeatureClearItemAddGlobalTrash.Model2.Coins")>0){
+            if(main.getConfig().getDouble("Set.PersonalTrashCan.OriginalFeatureClearItemAddGlobalTrash.Model2.Coins")>0){
                 //保证点到的一定是Gui里的
                 if(itemStack==null||!PlayerToInventory.containsValue(event.getClickedInventory())){
 //                    System.out.println("a");
@@ -138,6 +150,20 @@ public class AutoTrashListener implements Listener {
         //测试Vault插件是否可用
 //        testVault(player);
 
+        // 当版本大于1.14 且 NoWorldTrashCanEnterPersonalTrashCan 打开
+        // 将玩家UUID存入Item中
+        if(NoWorldTrashCanEnterPersonalTrashCan && VersionFlag){
+            ItemStack itemStack = item.getItemStack();
+
+            ItemMeta meta = itemStack.getItemMeta();
+            NamespacedKey namespacedKey = new NamespacedKey(main,"PlayerUUID");
+            meta.getPersistentDataContainer().set(namespacedKey, PersistentDataType.STRING,player.getUniqueId().toString());
+            itemStack.setItemMeta(meta);
+            item.setItemStack(itemStack);
+
+//            System.out.println("版本大于1.14 可以使用");
+        }
+
 
 
 //        System.out.println("1");
@@ -159,7 +185,7 @@ public class AutoTrashListener implements Listener {
                             ItemToPlayer.remove(item);
                         }
                     }
-                }.runTaskLater(main, main.getConfig().getInt("Set.GlobalTrash.OriginalFeatureClearItemAddGlobalTrash.Delay") * 20L);
+                }.runTaskLater(main, main.getConfig().getInt("Set.PersonalTrashCan.OriginalFeatureClearItemAddGlobalTrash.Delay") * 20L);
 
             }
 
@@ -208,7 +234,7 @@ public class AutoTrashListener implements Listener {
 
 
 
-    public Inventory InitPlayerInv(Player player){
+    public static Inventory InitPlayerInv(Player player){
         return Bukkit.createInventory(null, 54, message.find("PlayerTrashCan").replace("%Player%",player.getName()));
     }
 
@@ -249,7 +275,7 @@ public class AutoTrashListener implements Listener {
                             //加进去了
                         }else {
                             //加不进去就清空个人垃圾桶
-                            if(main.getConfig().getBoolean("Set.GlobalTrash.OriginalFeatureClearItemAddGlobalTrash.Model2.AutoClear")){
+                            if(main.getConfig().getBoolean("Set.PersonalTrashCan.OriginalFeatureClearItemAddGlobalTrash.Model2.AutoClear")){
                                 inventory.clear();
                                 player.sendMessage(message.find("PlayerTrashCanFilled"));
                                 inventory.addItem(itemStack);

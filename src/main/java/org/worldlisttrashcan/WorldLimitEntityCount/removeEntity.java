@@ -25,17 +25,23 @@ public class removeEntity {
 
 
     public static void dealEntity(Entity entity){
-        EntityType entityType = entity.getType();
+//        EntityType entityType = entity.getType();
+        String entityType = entity.getName();
+        entityType = entityType.toUpperCase();
 
-        int limit = GatherLimits.get(entityType.name())[0];
-        int range = GatherLimits.get(entityType.name())[1];
-        int clearCount = GatherLimits.get(entityType.name())[2];
+//        int limit = GatherLimits.get(entityType.name())[0];
+//        int range = GatherLimits.get(entityType.name())[1];
+//        int clearCount = GatherLimits.get(entityType.name())[2];
+        int limit = GatherLimits.get(entityType)[0];
+        int range = GatherLimits.get(entityType)[1];
+        int clearCount = GatherLimits.get(entityType)[2];
 //                int count = 0;
         List<org.bukkit.entity.Entity> entityList = new ArrayList<>();
         List<Player> PlayerList = new ArrayList<>();
 
         for (org.bukkit.entity.Entity NearEntity : entity.getNearbyEntities(range, range, range)) {
-            if(NearEntity.getType() == entity.getType()){
+//            if(NearEntity.getType() == entity.getType()){
+            if(NearEntity.getName().equalsIgnoreCase(entity.getName())){
                 entityList.add(NearEntity);
             }
             if(NearEntity instanceof Player){

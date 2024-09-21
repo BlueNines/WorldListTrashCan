@@ -22,6 +22,7 @@ import org.worldlisttrashcan.message;
 
 import static org.worldlisttrashcan.WorldLimitEntityCount.removeEntity.removeLivingEntity;
 import static org.worldlisttrashcan.WorldListTrashCan.UseEntityBarPlayerList;
+import static org.worldlisttrashcan.message.consoleSay;
 
 /* loaded from: 限制世界实体数量，最终版 - 副本.jar:org/example9/javafirstplugin/Main.class */
 public class LimitMain implements Listener {
@@ -276,8 +277,19 @@ public class LimitMain implements Listener {
 //            System.out.println("12");
             if(entity.getType()!=null){
 //                System.out.println("13");
-                String typename = entity.getType().name();
+//                String typename = entity.getType().name();
+                String typename = entity.getName();
+//                if(typename.equalsIgnoreCase("UNKNOW")){
+//                    typename = entity.getName();
+//                }
+
                 player.sendMessage(message.find("ClickFindEntityType").replace("%EntityType%",typename));
+
+//                consoleSay(player,"entity 1getName "+entity.getName());
+//                consoleSay(player,"entity getType "+entity.getType());
+//                consoleSay(player,"entity 1getCustomName "+entity.getCustomName());
+////                            consoleSay(sender,"entity 1getScoreboardEntryName "+entity.getScoreboardEntryName());
+//                consoleSay(player,"entity 1getEntitySpawnReason "+entity.getEntitySpawnReason());
 
 
 

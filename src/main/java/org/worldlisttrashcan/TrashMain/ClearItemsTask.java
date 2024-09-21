@@ -1,7 +1,9 @@
 package org.worldlisttrashcan.TrashMain;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -9,11 +11,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.worldlisttrashcan.data;
+import org.worldlisttrashcan.message;
 
 import java.util.*;
 
+import static org.worldlisttrashcan.AutoTrashMain.AutoTrashListener.*;
 import static org.worldlisttrashcan.TrashMain.GlobalTrashGui.ClearContainer;
 import static org.worldlisttrashcan.TrashMain.TrashListener.GlobalItemSetString;
 import static org.worldlisttrashcan.WorldListTrashCan.*;
@@ -254,12 +259,15 @@ public class ClearItemsTask {
                                 ItemStack itemStack = item.getItemStack();
 
 
+                                // 不处理带有关键lore的物品
                                 if (NoClearItemFlag(itemStack)) {
                                     continue;
                                 }
 
 
                                 String itemStackTypeString = itemStack.getType().toString();
+                                // 这个flag指的是这个物品是否被处理过
+
                                 boolean flag = true;
 //                                System.out.println("--1");
                                 if (locationSet != null && !locationSet.isEmpty()) {
@@ -287,11 +295,6 @@ public class ClearItemsTask {
                                                     flag = false;
                                                     break;
                                                 }
-//                                                else {
-//                                                    inventoryList.remove(0);
-//                                                    System.out.println("没加进去");
-//                                                    locationSet.remove(location);
-//                                                }
                                             }
                                             //无法获取到箱子对象的处理
                                             else {
@@ -303,28 +306,53 @@ public class ClearItemsTask {
                                                 main.getLogger().info(org.worldlisttrashcan.message.find("NotFindChest").replace("%location%", locationString));
                                             }
                                         }
-
-
-//                                            for (Inventory inventory : inventoryList) {
-//                                                if (inventory.addItem(itemStack).isEmpty()) {
-//                                                    System.out.println("1");
-//                                                    break;
-//                                                } else {
-////                                                    inventoryList.remove(0);
-//                                                    System.out.println("2");
-//                                                    continue;
-//                                                }
-//                                            }
-
-
-//                                        }
-
-
                                     }
 
 //                                    }
                                 }
-//                                System.out.println("---1");
+
+
+                                // 如果物品带有玩家uuid，则是玩家主动丢弃的物品，优先进入玩家个人垃圾桶
+                                // 如果物品没有被处理过且开启了 NoWorldTrashCanEnterPersonalTrashCan
+                                if(flag && VersionFlag){
+
+                                    ItemMeta meta = itemStack.getItemMeta();
+                                    NamespacedKey namespacedKey = new NamespacedKey(main,"PlayerUUID");
+                                    String PlayerUUID = meta.getPersistentDataContainer().get(namespacedKey, PersistentDataType.STRING);
+                                    System.out.println("meta.getPersistentDataContainer().getKeys().toString() "+meta.getPersistentDataContainer().getKeys().toString());
+
+                                    if (PlayerUUID != null) {
+
+                                        Player player = Bukkit.getPlayer(UUID.fromString(PlayerUUID));
+                                        // 如果丢弃的所属玩家在线
+                                        if (player !=null){
+
+                                            Inventory inventory = PlayerToInventory.get(player);
+                                            if(inventory==null){
+
+                                                PlayerToInventory.put(player, InitPlayerInv(player));
+                                            }else {
+                                                if (inventory.addItem(itemStack).isEmpty()) {
+                                                    //加进去了
+                                                    flag = false;
+                                                }else {
+                                                    //加不进去就清空个人垃圾桶
+                                                    if(main.getConfig().getBoolean("Set.PersonalTrashCan.OriginalFeatureClearItemAddGlobalTrash.Model2.AutoClear")){
+                                                        inventory.clear();
+                                                        player.sendMessage(message.find("PlayerTrashCanFilled"));
+                                                        if (inventory.addItem(itemStack).isEmpty()) {
+                                                            //加进去了
+                                                            flag = false;
+                                                        }
+                                                    }
+
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+
                                 //如果物品不在全局世界垃圾桶ban表里
                                 if (GlobalTrashGuiFlag && !GlobalItemSetString.contains(itemStackTypeString)) {
                                     //如果全球垃圾桶开启，且该物品没有被普通的世界垃圾桶回收过
@@ -354,35 +382,57 @@ public class ClearItemsTask {
 
 //                                    System.out.println("实体: "+entity.getType().toString());
 
-                                    if (BlackNameList.contains(entity.getType().toString())) {
+                                    if (BlackNameList.contains(entity.getType().toString())||
+                                            BlackNameList.contains(entity.getName())
+                                    ) {
 //                                        System.out.println("黑名单: "+entity.getType().toString());
                                         entity.remove();
                                         EntitySum++;
                                         continue;
                                     }
 
-                                    if (WhiteNameList.contains(entity.getType().toString())) {
+                                    if (WhiteNameList.contains(entity.getType().toString())||
+                                            WhiteNameList.contains(entity.getName())
+                                    ) {
 //                                        System.out.println("白名单: "+entity.getType().toString());
                                         continue;
                                     }
 
 
-                                    //如果生物被命名过
-                                    if (!ClearReNameEntity&&(entity.getCustomName()!=null&&!entity.getCustomName().isEmpty())) {
+                                    if(entity==null){
                                         continue;
                                     }
 
 
+                                    //如果生物被命名过
+//                                    if (!ClearReNameEntity&&(entity!=null&&entity.getCustomName()!=null&&!entity.getCustomName().isEmpty())) {
+                                    if (!ClearReNameEntity&&(
+                                            entity!=null&&
+                                                    entity.getCustomName()!=null
+                                                    &&
+                                                    !entity.getCustomName().isEmpty())
+                                    ) {
+
+                                        continue;
+                                    }
+
+//                                    Component customName = entity.customName();
+//                                    boolean hasCustomName = customName != null && !customName.toString().isEmpty();
+//                                    if (!ClearReNameEntity && hasCustomName) {
+//                                        continue;
+//                                    }
 
                                     if (entity instanceof org.bukkit.entity.Animals) {
                                         if (ClearAnimals) {
                                             entity.remove();
+//                                            System.out.println("ClearAnimals: "+entity.getType().toString());
                                             EntitySum++;
                                             continue;
                                         }
                                     } else if (entity instanceof org.bukkit.entity.Monster) {
                                         if (ClearMonster) {
                                             entity.remove();
+//                                            System.out.println("ClearMonster: "+entity.getType().toString());
                                             EntitySum++;
                                             continue;
                                         }

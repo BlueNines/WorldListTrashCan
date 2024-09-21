@@ -30,94 +30,6 @@ public class BukkitClearGatherEntityTask {
 
     public BukkitClearGatherEntityTask() {
         bukkitRunnable = new BukkitRunnable() {
-            
-//            @Override
-//            public void run() {
-//                int count=1;
-//                for (World world : Bukkit.getWorlds()) {
-//
-//                    count++;
-//                    new BukkitRunnable() {
-//
-//                        @Override
-//                        public void run() {
-////                            System.out.println("1");
-//                            for (Entity entity : world.getEntities()) {
-////                                System.out.println("2");
-//                                if(GatherLimitFlag){
-////                                    System.out.println("3");
-////            System.out.println("GatherLimits "+GatherLimits.toString());
-////            System.out.println("GatherBanWorlds "+GatherBanWorlds.toString());
-////                                    Entity entity = event.getEntity();
-//                                    String worldName = entity.getWorld().getName();
-//                                    EntityType entityType = entity.getType();
-//                                    if (GatherLimits.containsKey(entityType.name())&&!GatherBanWorlds.contains(worldName)) {
-//                                        int limit = GatherLimits.get(entityType.name())[0];
-//                                        int range = GatherLimits.get(entityType.name())[1];
-//                                        int clearCount = GatherLimits.get(entityType.name())[2];
-////                int count = 0;
-//                                        List<Entity> entityList = new ArrayList<>();
-//                                        List<Player> PlayerList = new ArrayList<>();
-//
-//                                        for (Entity NearEntity : entity.getNearbyEntities(range, range, range)) {
-//                                            if(NearEntity.getType() == entity.getType()){
-//                                                entityList.add(NearEntity);
-//                                            }
-//                                            if(NearEntity instanceof Player){
-//                                                PlayerList.add((Player) NearEntity);
-//                                            }
-//                                        }
-//                                        int size = entityList.size();
-////                System.out.println("size is "+size +"  limit is "+limit);
-//                                        if(size>limit-1){
-////                    event.setCancelled(true);
-//
-//                                            for (Player player : PlayerList) {
-//
-//                                                //你的附近 %range% 格内有 %entityType%x%size%只 , 达到密集实体的要求，已清理
-//                                                player.sendMessage(message.find("GatherClearToNearPlayerMessage").replace("%entityType%",entityType+"").replace("%range%",range+"").replace("%size%",size+""));
-//
-//                                            }
-//                                            if(clearCount>size){
-//                                                clearCount = size;
-//                                            }
-//                                            for (int i = 0 ;i<clearCount;i++) {
-//                                                Entity entity1 = entityList.get(i);
-//                                                if(entity1 instanceof LivingEntity){
-//                                                    LivingEntity livingEntity = (LivingEntity)entity1;
-////                                                    livingEntity.setHealth(0);
-//                                                    removeLivingEntity(livingEntity);
-//                                                }else {
-//                                                    entity1.remove();
-//                                                }
-//
-////                        entity1.remove();
-//                                            }
-//
-//
-//                                        }
-//                                    }
-//                                }
-//                            }
-//
-//                        }
-//                    }.runTaskLater(main,20L*count);
-//                }
-//            }
-//
-//        };
-
-
-
-
-
-
-
-
-
-
-
-
 
             @Override
             public void run() {
@@ -134,10 +46,17 @@ public class BukkitClearGatherEntityTask {
                             }
 
                             for (Entity entity : world.getEntities()) {
+//                                System.out.println(entity.getName());
+
+
                                 if(GatherLimitFlag){
-                                    String worldName = entity.getWorld().getName();
-                                    EntityType entityType = entity.getType();
-                                    if (GatherLimits.containsKey(entityType.name())) {
+//                                    String worldName = entity.getWorld().getName();
+//                                    EntityType entityType = entity.getType();
+                                    String entityType = entity.getName();
+
+
+//                                    if (GatherLimits.containsKey(entityType.name())) {
+                                    if (GatherLimits.containsKey(entityType.toUpperCase())) {
                                         dealEntity(entity);
                                     }
                                 }

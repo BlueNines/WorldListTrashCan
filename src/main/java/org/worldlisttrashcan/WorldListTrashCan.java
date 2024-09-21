@@ -37,11 +37,11 @@ import org.worldlisttrashcan.WorldLimitEntityCount.PaperEntityMoveEvent;
 import java.util.*;
 import java.util.function.Consumer;
 
+import static org.worldlisttrashcan.AutoTrashMain.AutoTrashListener.NoWorldTrashCanEnterPersonalTrashCan;
 import static org.worldlisttrashcan.AutoTrashMain.AutoTrashListener.OriginalFeatureClearItemAddGlobalTrashModel;
 import static org.worldlisttrashcan.DropSystem.DropLimitListener.PlayerDropList;
 import static org.worldlisttrashcan.IsVersion.*;
-import static org.worldlisttrashcan.Method.Method.AutoCheckFoliaServer;
-import static org.worldlisttrashcan.Method.Method.AutoCheckPaperServer;
+import static org.worldlisttrashcan.Method.Method.*;
 import static org.worldlisttrashcan.TrashMain.TrashListener.GlobalItemSetString;
 import static org.worldlisttrashcan.WorldLimitEntityCount.LimitMain.*;
 import static org.worldlisttrashcan.WorldLimitEntityCount.removeEntity.ItemDropFlag;
@@ -208,7 +208,8 @@ public final class WorldListTrashCan extends JavaPlugin {
 
 
         //警告：folia服务器只能用上面的，不能用bukkit延时任务来检查密集实体
-        if((IsPaperServer &&!compareVersions("1.13.0"))|| IsFoliaServer){
+//        if((IsPaperServer &&!compareVersions("1.13.0")) || IsFoliaServer){
+        if(AutoCheckEntityMoveEventServer()){
 //            System.out.println("1");
             Bukkit.getPluginManager().registerEvents(new PaperEntityMoveEvent(), this);
         }else {
@@ -439,8 +440,8 @@ public final class WorldListTrashCan extends JavaPlugin {
 
                         message.consoleSay(sender,"Entity Type List");
 
-                        for (Entity entity : player.getChunk().getEntities()) {
-                            String typename = entity.getType().name();
+                        for (Entity entity : player.getLocation().getChunk().getEntities()) {
+                            String typename = entity.getName();
 //                            message.consoleSay(sender,"- "+typename);
                             TextComponent clipboardMessage = new TextComponent("- "+typename);
                             clipboardMessage.setColor(net.md_5.bungee.api.ChatColor.GREEN);
@@ -449,6 +450,19 @@ public final class WorldListTrashCan extends JavaPlugin {
                             // 发送消息给玩家
                             player.spigot().sendMessage(clipboardMessage);
                         }
+
+
+//                        for (Entity entity : player.getChunk().getEntities()) {
+//                            consoleSay(sender,"entity 1getName "+entity.getName());
+//                            consoleSay(sender,"entity 1getName "+entity.getType());
+//                            consoleSay(sender,"entity 1getCustomName "+entity.getCustomName());
+////                            consoleSay(sender,"entity 1getScoreboardEntryName "+entity.getScoreboardEntryName());
+//                            consoleSay(sender,"entity 1getEntitySpawnReason "+entity.getEntitySpawnReason());
+//                        }
+
+
+
+
 
                         player.sendMessage(message.find("PleaseRightEntity"));
                     }else {
@@ -677,9 +691,24 @@ public final class WorldListTrashCan extends JavaPlugin {
         }
 
 
+        // 这里要兼容低版本wtc的配置文件路径
 
-        OriginalFeatureClearItemAddGlobalTrashModel =main.getConfig().getInt("Set.GlobalTrash.OriginalFeatureClearItemAddGlobalTrash.UseModel");
-        if(getConfig().getInt("Set.GlobalTrash.OriginalFeatureClearItemAddGlobalTrash.UseModel")!=3){
+        String OriginPath = "Set.GlobalTrash.OriginalFeatureClearItemAddGlobalTrash";
+//        if(main.getConfig().get(OriginPath) == null){
+//            OriginPath = "Set.PersonalTrashCan.OriginalFeatureClearItemAddGlobalTrash";
+//        }
+        OriginPath = "Set.PersonalTrashCan.OriginalFeatureClearItemAddGlobalTrash";
+
+        OriginalFeatureClearItemAddGlobalTrashModel = main.getConfig().getInt(OriginPath+".UseModel");
+
+        NoWorldTrashCanEnterPersonalTrashCan = main.getConfig().getBoolean("Set.PersonalTrashCan.NoWorldTrashCanEnterPersonalTrashCan");
+
+//        if (OriginalFeatureClearItemAddGlobalTrashModel == 0){
+//
+//        }
+
+//        if(getConfig().getInt(OriginPath+".UseModel")!=3){
+        if(main.getConfig().getBoolean("Set.PersonalTrashCan.Flag")){
             HandlerList.unregisterAll(autoTrashListener);
 //            int Model = main.getConfig().getInt("Set.GlobalTrash.OriginalFeatureClearItemAddGlobalTrash.UseModel");
 ////            System.out.println("Model "+Model);
@@ -753,7 +782,8 @@ public final class WorldListTrashCan extends JavaPlugin {
             for(String EntityToCountStrAndLimitRange : main.getConfig().getStringList("GatherEntityLimitCount.DefaultCount")){
                 String[] strings = EntityToCountStrAndLimitRange.split(";");
 //            strings[0]
-                EntityType entityType = getEntityType(strings[0].toUpperCase());
+//                EntityType entityType = getEntityType(strings[0].toUpperCase());
+                String entityType = strings[0].toUpperCase();
                 if (entityType == null) {
                     //EntityCountSetOK: "%PluginTitle% 成功设置各世界该 %Entity% 实体默认为 %Count% 个"
                     //EntityCountSetError: "%PluginTitle% 实体类型错误！可选的实体类型包括：%EntityTypes%"
@@ -763,7 +793,8 @@ public final class WorldListTrashCan extends JavaPlugin {
                 int limit = Integer.parseInt(strings[1]);
                 int range = Integer.parseInt(strings[2]);
                 int clearCount = Integer.parseInt(strings[3]);
-                GatherLimits.put(entityType.name(), new int[]{limit, range, clearCount});
+//                GatherLimits.put(entityType.name().toUpperCase(), new int[]{limit, range, clearCount});
+                GatherLimits.put(entityType, new int[]{limit, range, clearCount});
 //            main.getLogger().info(ChatColor.GREEN + "成功设置 " + entityType.name() + " 的数量限制为 " + limit);
 //                main.getLogger().info(message.find("EntityCountSetOK").replace("%Count%",limit+"").replace("%Entity%",entityType.name()));
             }

@@ -28,12 +28,16 @@ public class PaperEntityMoveEvent implements Listener {
             if (GatherBanWorlds.contains(entity.getWorld().getName())) {
                 return;
             }
-            EntityType entityType = entity.getType();
+//            EntityType entityType = entity.getType();
+            String entityType = entity.getName();
 //            for (String s : GatherLimits.keySet()) {
 //                System.out.println("GatherLimits "+s);
 //            }
 //            System.out.println("entityType.name() "+entityType.name());
-            if (GatherLimits.containsKey(entityType.name())) {
+
+//            System.out.println(entity.getName());
+
+            if (GatherLimits.containsKey(entityType.toUpperCase())) {
                 dealEntity(entity);
             }
         }
@@ -47,10 +51,19 @@ public class PaperEntityMoveEvent implements Listener {
                 return;
             }
 
+//            for(Entity entity : player.getNearbyEntities(10,10,10)){
             for(Entity entity : player.getNearbyEntities(10,10,10)){
+//                System.out.println(entity.getName());
+//                EntityType entityType = entity.getType();
+                String entityType = entity.getName();
 
-                EntityType entityType = entity.getType();
-                if (GatherLimits.containsKey(entityType.name())) {
+//                System.out.println("entityType.toUpperCase() "+entityType.toUpperCase());
+//                for (String string : GatherLimits.keySet()) {
+//                    System.out.println("string "+string);
+//                }
+                if (GatherLimits.containsKey(entityType.toUpperCase())) {
+
+
                     dealEntity(entity);
                 }
             }

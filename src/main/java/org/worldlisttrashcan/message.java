@@ -3,6 +3,7 @@ package org.worldlisttrashcan;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
+//import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -135,25 +136,43 @@ public class message {
         return ChatColor.translateAlternateColorCodes('&', msg);
     }
     public static Component color(String msg,boolean b) {
-        // 正则表达式匹配颜色代码和文本片段
-        Pattern pattern = Pattern.compile("(&#[0-9a-fA-F]{6})([^&]*)");
-        Matcher matcher = pattern.matcher(msg);
 
-        // 创建一个组件构建器
-        Component component = Component.empty();
+        //msg的处理
+        msg = msg.replaceAll("&#", "##");
+        msg = msg.replaceAll("&", "§");
+        msg = msg.replaceAll("##", "&#");
 
-        while (matcher.find()) {
-            String colorCode = matcher.group(1).substring(1); // 提取颜色代码并去掉&
-            String text = matcher.group(2); // 提取文本片段
 
-            // 生成颜色并应用到文本片段上
-            TextColor color = TextColor.fromHexString(colorCode);
-            Component coloredText = Component.text(text, Style.style(color));
+        if(b){
+            // 正则表达式匹配颜色代码和文本片段
+            Pattern pattern = Pattern.compile("(&#[0-9a-fA-F]{6})([^&]*)");
+            Matcher matcher = pattern.matcher(msg);
 
-            // 将有颜色的文本片段添加到组件中
-            component = component.append(coloredText);
+            // 创建一个组件构建器
+            Component component = Component.empty();
+            boolean flag = false;
+
+            while (matcher.find()) {
+                flag = true;
+                String colorCode = matcher.group(1).substring(1); // 提取颜色代码并去掉&
+                String text = matcher.group(2); // 提取文本片段
+
+                // 生成颜色并应用到文本片段上
+                TextColor color = TextColor.fromHexString(colorCode);
+                Component coloredText = Component.text(text, Style.style(color));
+
+                // 将有颜色的文本片段添加到组件中
+                component = component.append(coloredText);
+            }
+            if (!flag){
+                return Component.text(msg.replace("&","§"));
+            }
+//            ChatColor.translateAlternateColorCodes('&', xxx);
+            return component;
         }
-        return component;
+        return null;
+
+//        return MiniMessage.miniMessage().deserialize(msg);
     }
 
     public static void AllMessageLoad(){

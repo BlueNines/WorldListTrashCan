@@ -56,7 +56,8 @@ public class Method {
     public static boolean AutoCheckPaperServer(){
 
         // 插件启动逻辑
-        if (isClassPresent("io.papermc.paper.event.entity.EntityMoveEvent")) {
+//        if (isClassPresent("io.papermc.paper.event.entity.EntityMoveEvent")) {
+        if (isClassPresent("io.papermc.paper.threadedregions.scheduler.ScheduledTask")) {
 //            Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN+"检测到服务器拥有Paper的API，正在适用目前最佳的方法");
             message.consoleSay("&a检测到服务器拥有Paper的API，正在适用目前最佳的方法");
             return true;
@@ -67,6 +68,23 @@ public class Method {
 
         return false;
     }
+    public static boolean AutoCheckEntityMoveEventServer(){
+
+        // 插件启动逻辑
+        if (isClassPresent("io.papermc.paper.event.entity.EntityMoveEvent")) {
+//        if (isClassPresent("io.papermc.paper.threadedregions.scheduler.ScheduledTask")) {
+            Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN+"检测到服务器拥有Paper的EntityMoveEvent，正在适用目前最佳的方法");
+//            message.consoleSay("&a检测到服务器拥有Paper的API，正在适用目前最佳的方法");
+            return true;
+
+        } else {
+//            Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN+"插件正在自动适应");
+        }
+
+        return false;
+    }
+
+
 
 
 }
