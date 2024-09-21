@@ -1,0 +1,7 @@
+*.jar
+.idea/
+target/
+.git/
+.gitignore
+pom.xml
+WorldListTrashCan.iml
