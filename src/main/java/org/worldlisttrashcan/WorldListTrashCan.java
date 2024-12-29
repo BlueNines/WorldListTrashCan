@@ -7,6 +7,9 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -52,6 +55,7 @@ public final class WorldListTrashCan extends JavaPlugin {
     public static Plugin main;
 
 
+    public static BossBar bossBar = Bukkit.createBossBar("default", BarColor.BLUE, BarStyle.SOLID);
 
     public static WorldListTrashCan worldListTrashCan;
 
@@ -102,6 +106,10 @@ public final class WorldListTrashCan extends JavaPlugin {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+
+
+
+
         List<String> completions = new ArrayList<>();
         List<String> allSubCommands = Arrays.asList("PlayerTrash","DropMode","look","GlobalBan","help","reload","GlobalTrash","ban","add");
         if (command.getName().equalsIgnoreCase("WorldListTrashCan")||command.getName().equalsIgnoreCase("wtc")) {
@@ -238,6 +246,7 @@ public final class WorldListTrashCan extends JavaPlugin {
     public static Map<Player,World> PlayerToWorld = new HashMap<>();
 
 
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 //        System.out.println(command.toString()+"："+args.toString());
@@ -288,7 +297,6 @@ public final class WorldListTrashCan extends JavaPlugin {
                 if (sender instanceof Player) {
                     if (sender.hasPermission("WorldListTrashCan.BanGui")||sender.isOp()) {
                         Player player = ((Player) sender).getPlayer();
-
                         PlayerToWorld.put(player,player.getWorld());
                         sender.sendMessage(message.find("SecondCountdown"));
                         if(IsFoliaServer){
@@ -563,6 +571,9 @@ public final class WorldListTrashCan extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+
+        bossBar.removeAll();
+
     }
 
 //    public static void ConfigStringReplace(ConfigurationSection config, String target, String replacement) {
@@ -589,6 +600,7 @@ public final class WorldListTrashCan extends JavaPlugin {
     public void reload(){
 //        reloadConfig();
 
+        bossBar.removeAll();
         saveDefaultConfig();
         reloadConfig();
 

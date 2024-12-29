@@ -5,6 +5,8 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -62,10 +64,19 @@ public class FoliaClearItemsTask {
 
 
     public FoliaClearItemsTask() {
+
+        boolean BossBarFlag = main.getConfig().getBoolean("Set.BossBarFlag");
         boolean ChatFlag = main.getConfig().getBoolean("Set.ChatFlag");
         boolean TitleFlag = main.getConfig().getBoolean("Set.TitleFlag");
         boolean ActionBarFlag = main.getConfig().getBoolean("Set.ActionBarFlag");
 
+        Map<Integer,String> BossBarToMessage = new HashMap<>();
+        for (String message : main.getConfig().getStringList("Set.BossBarMessageForCount")) {
+            String[] strings= message.split(";");
+            BossBarToMessage.put(Integer.parseInt(strings[0]),
+                    color(strings[1]+";"+strings[2]+";"+strings[3])
+            );
+        }
 
         Map<Integer,String> ChatIntToMessage = new HashMap<>();
         for (String message : main.getConfig().getStringList("Set.ChatMessageForCount")) {
@@ -102,6 +113,8 @@ public class FoliaClearItemsTask {
 
         boolean ClearEntityFlag = main.getConfig().getBoolean("Set.ClearEntity.Flag");
 
+        int bossBarMaxInt;
+        bossBarMaxInt = Integer.parseInt(main.getConfig().getStringList("Set.BossBarMessageForCount").get(0).split(";")[0]);
 
 
 
@@ -118,6 +131,46 @@ public class FoliaClearItemsTask {
 
 
             public void PrintCountMessage(int count){
+
+                //如果EveryClearGlobalTrash==-1，且count==-1，则不提示
+                if (EveryClearGlobalTrash == -1 && count == -1) {
+                    return;
+                }
+
+
+                if (BossBarToMessage.containsKey(count) && BossBarFlag) {
+                    String string = BossBarToMessage.get(count);
+                    String[] strings = string.split(";");
+                    String message = (strings[0]
+                            .replace("%ItemSum%", GlobalTrashItemSum + "")
+                            .replace("%EntitySum%", EntitySum + "")
+                            .replace("%ClearGlobalCount%", EveryClearGlobalTrash - ClearCount + ""));
+                    for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
+                        if(offlinePlayer==null){
+                            continue;
+                        }
+                        Player player = offlinePlayer.getPlayer();
+                        if(bossBar.getPlayers().contains(player)){
+                            //如果这个玩家有bossbar了
+                        }else {
+                            //玩家没有bossbar
+                            if (player != null) {
+                                bossBar.addPlayer(player);
+                            }else {
+                            }
+                        }
+                        bossBar.setTitle(message);
+                        bossBar.setColor(BarColor.valueOf(strings[2]));
+                        bossBar.setStyle(BarStyle.valueOf(strings[1]));
+                        double ct = ((double) count )/bossBarMaxInt;
+                        if(ct>0){
+                            bossBar.setProgress(ct);
+                        }else {
+                            bossBar.setProgress(1);
+                        }
+                    }
+                }
+
                 if (ChatIntToMessage.containsKey(count)) {
                     if(ChatFlag){
 //                        Bukkit.broadcastMessage(ChatIntToMessage.get(count).replace("%ItemSum%",GlobalTrashItemSum+"").replace("%EntitySum%",EntitySum+"").replace("%ClearGlobalCount%",EveryClearGlobalTrash-ClearCount+""));
@@ -193,6 +246,13 @@ public class FoliaClearItemsTask {
 //                                PrintCountMessage(-2);
 //                            }
 //                        },2, TimeUnit.SECONDS);
+                        Bukkit.getAsyncScheduler().runDelayed(main, new Consumer<ScheduledTask>() {
+                            @Override
+                            public void accept(ScheduledTask scheduledTask) {
+                                bossBar.removeAll();
+                            }
+                        },7, TimeUnit.SECONDS);
+
                         NowChatIntToInt.put(finalCount-3,-2);
 
 
@@ -204,6 +264,12 @@ public class FoliaClearItemsTask {
 //                                PrintCountMessage(-1);
 //                            }
 //                        },2, TimeUnit.SECONDS);
+                        Bukkit.getAsyncScheduler().runDelayed(main, new Consumer<ScheduledTask>() {
+                            @Override
+                            public void accept(ScheduledTask scheduledTask) {
+                                bossBar.removeAll();
+                            }
+                        },7, TimeUnit.SECONDS);
                         NowChatIntToInt.put(finalCount-3,-1);
                     }
 
@@ -281,7 +347,7 @@ public class FoliaClearItemsTask {
                                                 ItemMeta meta = itemStack.getItemMeta();
                                                 NamespacedKey namespacedKey = new NamespacedKey(main,"PlayerUUID");
                                                 String PlayerUUID = meta.getPersistentDataContainer().get(namespacedKey, PersistentDataType.STRING);
-                                                System.out.println("meta.getPersistentDataContainer().getKeys().toString() "+meta.getPersistentDataContainer().getKeys().toString());
+//                                                System.out.println("meta.getPersistentDataContainer().getKeys().toString() "+meta.getPersistentDataContainer().getKeys().toString());
 
                                                 if (PlayerUUID != null) {
 
@@ -441,6 +507,7 @@ public class FoliaClearItemsTask {
     ScheduledTask foliaTask;
     public void Start(){
         foliaTask = Bukkit.getAsyncScheduler().runAtFixedRate(main,foliaRunnable,1,1, TimeUnit.SECONDS);
+        bossBar.removeAll();
     }
 
     public void Stop(){
