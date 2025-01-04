@@ -136,8 +136,6 @@ public class GlobalTrashGui implements InventoryHolder {
                 }
             }
             else if(s.equals("y")){
-
-
                 //名字：§§是防重叠用的
                 Menu.setItem(i,ShowBorderItemStack);
             }

@@ -15,7 +15,7 @@ public class FoliaRunable {
             if(ItemToPlayer.get(item)!=null){
                 ItemToPlayer.remove(item);
             }
-        }, () -> main.getLogger().info("Error,Player is null"),main.getConfig().getInt("Set.GlobalTrash.OriginalFeatureClearItemAddGlobalTrash.Delay")*20L);
+        }, () -> main.getLogger().info("Error,Player is null"),main.getConfig().getInt("Set.PersonalTrashCan.OriginalFeatureClearItemAddGlobalTrash.Delay")*20L);
 
     }
 }

@@ -8,6 +8,7 @@ import org.bukkit.*;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -102,6 +103,7 @@ public class FoliaClearItemsTask {
 
         }
 
+        boolean ClearExpBottle = main.getConfig().getBoolean("Set.ClearEntity.ClearExpBottle");
         boolean ClearMonster = main.getConfig().getBoolean("Set.ClearEntity.ClearMonster");
         boolean ClearAnimals = main.getConfig().getBoolean("Set.ClearEntity.ClearAnimals");
         boolean ClearReNameEntity = main.getConfig().getBoolean("Set.ClearEntity.ClearReNameEntity");
@@ -288,6 +290,13 @@ public class FoliaClearItemsTask {
                                     }
                                     for (Entity entity : chunk.getEntities()) {
 //                                        ChunkMap.put(entity,null);
+                                        if (entity instanceof ExperienceOrb) {
+                                            if (ClearExpBottle) {
+                                                entity.remove();
+                                                EntitySum++;
+                                                continue;
+                                            }
+                                        }
 
                                         if (entity instanceof Item) {
                                             Item item = (Item) entity;

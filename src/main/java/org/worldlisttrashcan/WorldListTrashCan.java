@@ -12,7 +12,6 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -23,19 +22,17 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.worldlisttrashcan.AutoTrashMain.AutoTrashListener;
+import org.worldlisttrashcan.Bstats.Metrics;
 import org.worldlisttrashcan.DropSystem.DropLimitListener;
-
 import org.worldlisttrashcan.Method.SendMessageAbstract;
 import org.worldlisttrashcan.SimpleChange.NotPickArrowListener;
+import org.worldlisttrashcan.SimpleChange.TreadingFarmLandListener;
 import org.worldlisttrashcan.SpeakSystem.QuickSpeakListener;
 import org.worldlisttrashcan.SpeakSystem.QuickUseCommandListener;
-import org.worldlisttrashcan.SimpleChange.TreadingFarmLandListener;
 import org.worldlisttrashcan.TrashMain.*;
 import org.worldlisttrashcan.WorldLimitEntityCount.BukkitClearGatherEntityTask;
-//import org.worldlisttrashcan.WorldLimitEntityCount.BukkitEntityMoveEvent;
 import org.worldlisttrashcan.WorldLimitEntityCount.LimitMain;
 import org.worldlisttrashcan.WorldLimitEntityCount.PaperEntityMoveEvent;
-//import org.worldlisttrashcan.WorldLimitEntityCount.PaperEntityMoveEvent;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -170,7 +167,21 @@ public final class WorldListTrashCan extends JavaPlugin {
     @Override
     public void onEnable() {
 
+        int pluginId = 24350; // <-- Replace with the id of your plugin!
+//        Metrics metrics = new Metrics(this, pluginId);
+        Metrics metrics = new Metrics(this, pluginId);
+        metrics.addCustomChart(new Metrics.SingleLineChart("players",
+                () -> Bukkit.getOnlinePlayers().size()
+                ));
+        metrics.addCustomChart(new Metrics.SingleLineChart("servers", () ->1));
+        metrics.addCustomChart(new Metrics.MultiLineChart("players_and_servers", () -> {
+            Map<String, Integer> valueMap = new HashMap<>();
+            valueMap.put("servers", 1);
+            valueMap.put("players", Bukkit.getOnlinePlayers().size());
+            return valueMap;
+        }));
 
+//        metrics.addCustomChart(new Metrics.SimplePie("chart_id", () -> "My value"));
 
         // Plugin startup logic
         main = this;
@@ -661,6 +672,13 @@ public final class WorldListTrashCan extends JavaPlugin {
             HandlerList.unregisterAll(notPickArrowListener);
         }
 
+//        if(getConfig().getBoolean("SimpleOptimize.QuicklyPickExpBall")){
+//            HandlerList.unregisterAll(quicklyPickExpBall);
+//            Bukkit.getPluginManager().registerEvents(quicklyPickExpBall, this);
+//        }else {
+//            HandlerList.unregisterAll(quicklyPickExpBall);
+//        }
+
         if(getConfig().getBoolean("SimpleOptimize.NotTreadingFarmLand")){
             HandlerList.unregisterAll(treadingFarmLandListener);
             Bukkit.getPluginManager().registerEvents(treadingFarmLandListener, this);
@@ -705,11 +723,11 @@ public final class WorldListTrashCan extends JavaPlugin {
 
         // 这里要兼容低版本wtc的配置文件路径
 
-        String OriginPath = "Set.GlobalTrash.OriginalFeatureClearItemAddGlobalTrash";
+//        String OriginPath = "Set.GlobalTrash.OriginalFeatureClearItemAddGlobalTrash";
 //        if(main.getConfig().get(OriginPath) == null){
 //            OriginPath = "Set.PersonalTrashCan.OriginalFeatureClearItemAddGlobalTrash";
 //        }
-        OriginPath = "Set.PersonalTrashCan.OriginalFeatureClearItemAddGlobalTrash";
+        String OriginPath = "Set.PersonalTrashCan.OriginalFeatureClearItemAddGlobalTrash";
 
         OriginalFeatureClearItemAddGlobalTrashModel = main.getConfig().getInt(OriginPath+".UseModel");
 
@@ -743,8 +761,9 @@ public final class WorldListTrashCan extends JavaPlugin {
     AutoTrashListener autoTrashListener = new AutoTrashListener();
     DropLimitListener dropLimitListener = new DropLimitListener();
     NotPickArrowListener notPickArrowListener = new NotPickArrowListener();
-    TreadingFarmLandListener treadingFarmLandListener = new TreadingFarmLandListener();
     QuickSpeakListener quickSpeakListener = new QuickSpeakListener();
+    TreadingFarmLandListener treadingFarmLandListener = new TreadingFarmLandListener();
+//    QuicklyPickExpBall quicklyPickExpBall = new QuicklyPickExpBall();
     QuickUseCommandListener quickUseCommandListener = new QuickUseCommandListener();
 
 
