@@ -101,7 +101,7 @@ public class QuickUseCommandListener implements Listener {
 //                        PlayerToCommand.remove(player);
 ////                        System.out.println("!");
 //                    }
-//                }, () -> main.getLogger().info("Error,Player is null"),(long) (20*Time));
+//                }, () -> consoleSay("Error,Player is null"),(long) (20*Time));
 //            }else {
 //                new BukkitRunnable(){
 //                    @Override

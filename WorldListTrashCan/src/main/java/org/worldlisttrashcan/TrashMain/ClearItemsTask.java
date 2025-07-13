@@ -395,7 +395,7 @@ public class ClearItemsTask {
 //                        if (locationSet != null && !locationSet.isEmpty()) {
 //                            if (main.getConfig().getBoolean("Set.Debug")) {
 //                                for (Location location : locationSet) {
-//                                    main.getLogger().info(ChatColor.BLUE + "location为: " + location.toString());
+//                                    consoleSay(ChatColor.BLUE + "location为: " + location.toString());
 //                                }
 //                            }
 //                        }
@@ -424,7 +424,7 @@ public class ClearItemsTask {
                                     Item item = (Item) entity;
 
 //                                if (main.getConfig().getBoolean("Set.Debug")) {
-//                                    main.getLogger().info(ChatColor.BLUE + " " + world.getName() + "世界 清理了 :" + item.getItemStack().getType() + "x" + item.getItemStack().getAmount() + "个");
+//                                    consoleSay(ChatColor.BLUE + " " + world.getName() + "世界 清理了 :" + item.getItemStack().getType() + "x" + item.getItemStack().getAmount() + "个");
 //                                }
 
 
@@ -455,7 +455,7 @@ public class ClearItemsTask {
 //                                        if (!inventoryList.isEmpty()) {
 
 //                                        if (main.getConfig().getBoolean("Set.Debug")) {
-//                                            main.getLogger().info(ChatColor.BLUE + "还剩 " + inventoryList.size() + " 个箱子");
+//                                            consoleSay(ChatColor.BLUE + "还剩 " + inventoryList.size() + " 个箱子");
 //                                        }
 
 //                                            System.out.println("0");
@@ -473,9 +473,9 @@ public class ClearItemsTask {
                                                     Set<Location> locationSet1 = WorldToLocation.get(world).getLocationSet();
                                                     locationSet1.remove(location);
                                                     data.dataPut(world, locationSet1);
-//                                                    main.getLogger().info(ChatColor.RED + "由于没有找到箱子，自动从存储中移除了该" + location.toString() + "位置");
+//                                                    consoleSay(ChatColor.RED + "由于没有找到箱子，自动从存储中移除了该" + location.toString() + "位置");
                                                     String locationString = world.getName() + ": " + location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ();
-                                                    main.getLogger().info(org.worldlisttrashcan.message.find("NotFindChest").replace("%location%", locationString));
+                                                    consoleSay(org.worldlisttrashcan.message.find("NotFindChest").replace("%location%", locationString));
                                                 }
                                             }
                                         }

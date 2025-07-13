@@ -5,6 +5,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 
 import static org.worldlisttrashcan.AutoTrashMain.AutoTrashListener.ItemToPlayer;
 import static org.worldlisttrashcan.WorldListTrashCan.main;
+import static org.worldlisttrashcan.message.consoleSay;
 
 public class FoliaRunable {
     //这个folia的任务必须写在非监听器外，不然会出现错误
@@ -15,7 +16,7 @@ public class FoliaRunable {
             if(ItemToPlayer.get(item)!=null){
                 ItemToPlayer.remove(item);
             }
-        }, () -> main.getLogger().info("Error,Player is null"),main.getConfig().getInt("Set.PersonalTrashCan.OriginalFeatureClearItemAddGlobalTrash.Delay")*20L);
+        }, () -> consoleSay("Error,Player is null"),main.getConfig().getInt("Set.PersonalTrashCan.OriginalFeatureClearItemAddGlobalTrash.Delay")*20L);
 
     }
 }

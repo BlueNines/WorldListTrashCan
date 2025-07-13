@@ -80,7 +80,8 @@ public class message {
         if (message==null||message.trim().isEmpty()){
             return;
         }
-        Bukkit.getConsoleSender().sendMessage(color(pluginTitle+" "+message));
+//        Bukkit.getConsoleSender().sendMessage(color(pluginTitle+" "+message));
+        Bukkit.getConsoleSender().sendMessage(color(message));
     }
     public static void consoleSay(CommandSender commandSender, String message) {
         if (message==null||message.trim().isEmpty()){

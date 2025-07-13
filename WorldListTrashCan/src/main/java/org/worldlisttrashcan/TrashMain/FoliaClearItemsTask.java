@@ -25,8 +25,7 @@ import static org.worldlisttrashcan.Method.Method.papiReplace;
 import static org.worldlisttrashcan.TrashMain.GlobalTrashGui.ClearContainer;
 import static org.worldlisttrashcan.TrashMain.TrashListener.GlobalItemSetString;
 import static org.worldlisttrashcan.WorldListTrashCan.*;
-import static org.worldlisttrashcan.message.color;
-import static org.worldlisttrashcan.message.sendChatMessageToAction;
+import static org.worldlisttrashcan.message.*;
 
 public class FoliaClearItemsTask {
     List<World> WorldList = new ArrayList<>();
@@ -235,7 +234,7 @@ public class FoliaClearItemsTask {
                         }
                     }
                     if (ChatConsoleLogFlag){
-                        message.consoleSay(ChatIntToMessage.get(count).replace("%GlobalTrashAddSum%", GlobalTrashItemSum + "").replace("%DealItemSum%", DealItemSum + "").replace("%EntitySum%", EntitySum + "").replace("%ClearGlobalCount%", EveryClearGlobalTrash - ClearCount + ""));
+                        consoleSay(ChatIntToMessage.get(count).replace("%GlobalTrashAddSum%", GlobalTrashItemSum + "").replace("%DealItemSum%", DealItemSum + "").replace("%EntitySum%", EntitySum + "").replace("%ClearGlobalCount%", EveryClearGlobalTrash - ClearCount + ""));
                     }
 
                 }
@@ -414,7 +413,7 @@ public class FoliaClearItemsTask {
                                                     //如果物品不在世界垃圾桶ban表里
                                                     if (!WorldToLocation.get(world).getBanItemSet().contains(itemStackTypeString)) {
 //                                        if (main.getConfig().getBoolean("Set.Debug")) {
-//                                            main.getLogger().info(ChatColor.BLUE + "还剩 " + inventoryList.size() + " 个箱子");
+//                                            consoleSay(ChatColor.BLUE + "还剩 " + inventoryList.size() + " 个箱子");
 //                                        }
                                                         for (Location location : locationSet) {
 
@@ -432,9 +431,9 @@ public class FoliaClearItemsTask {
                                                                 Set<Location> locationSet1 = WorldToLocation.get(world).getLocationSet();
                                                                 locationSet1.remove(location);
                                                                 data.dataPut(world, locationSet1);
-//                                                    main.getLogger().info(ChatColor.RED + "由于没有找到箱子，自动从存储中移除了该" + location.toString() + "位置");
+//                                                    consoleSay(ChatColor.RED + "由于没有找到箱子，自动从存储中移除了该" + location.toString() + "位置");
                                                                 String locationString = world.getName() + ": " + location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ();
-                                                                main.getLogger().info(org.worldlisttrashcan.message.find("NotFindChest").replace("%location%", locationString));
+                                                                consoleSay(org.worldlisttrashcan.message.find("NotFindChest").replace("%location%", locationString));
                                                             }
                                                         }
                                                     }
@@ -585,7 +584,7 @@ public class FoliaClearItemsTask {
 //                    PrintCountMessage(count);
 
                     } catch (Exception e) {
-                        main.getLogger().info(ChatColor.RED + "该服务器环境似乎不兼容此插件的某些功能，请将报错截图发送至作者QQ 2831508831");
+                        consoleSay(ChatColor.RED + "该服务器环境似乎不兼容此插件的某些功能，请将报错截图发送至作者QQ 2831508831");
                         throw e;
                     } finally {
                         count = finalCount;

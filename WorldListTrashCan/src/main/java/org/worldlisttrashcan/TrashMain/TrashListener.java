@@ -33,6 +33,7 @@ import static org.worldlisttrashcan.IsVersion.IsFoliaServer;
 import static org.worldlisttrashcan.WorldListTrashCan.*;
 //import static org.worldlisttrashcan.data.Data;
 import static org.worldlisttrashcan.data.getConfig;
+import static org.worldlisttrashcan.message.consoleSay;
 
 public class TrashListener implements Listener {
 
@@ -160,8 +161,8 @@ public class TrashListener implements Listener {
             return;
         }
         if (main.getConfig().getBoolean("Set.Debug")) {
-            main.getLogger().info("告示牌子ID为"+event.getBlock().getData());
-            main.getLogger().info("告示牌type为"+event.getBlock().getType());
+            consoleSay("告示牌子ID为"+event.getBlock().getData());
+            consoleSay("告示牌type为"+event.getBlock().getType());
         }
         // 获取告示牌的内容
         String[] lines = event.getLines();
@@ -210,8 +211,8 @@ public class TrashListener implements Listener {
 
                         ) {
                             if (main.getConfig().getBoolean("Set.Debug")) {
-                                main.getLogger().info("目前该世界已创建垃圾桶数量为：" + getConfig().getStringList("WorldData." + world.getName() + ".SignLocation").size());
-                                main.getLogger().info("配置文件最大支持垃圾桶数量为：" + main.getConfig().getInt("Set.RashCanMax"));
+                                consoleSay("目前该世界已创建垃圾桶数量为：" + getConfig().getStringList("WorldData." + world.getName() + ".SignLocation").size());
+                                consoleSay("配置文件最大支持垃圾桶数量为：" + main.getConfig().getInt("Set.RashCanMax"));
                             }
                             player.sendMessage(message.find("CreateRashCan").replace("%world%",world.getName()));
 
@@ -248,7 +249,7 @@ public class TrashListener implements Listener {
                                         sign1.setLine(n,main.getConfig().getString("Set.SighCheckedName"));
                                         sign1.update();
                                     }
-                                }, () -> main.getLogger().info("Error,Player is null"),(long) (2L));
+                                }, () -> consoleSay("Error,Player is null"),(long) (2L));
                             }else {
                                 new BukkitRunnable(){
                                     @Override
@@ -313,9 +314,9 @@ public class TrashListener implements Listener {
                         } else {
 //                            player.sendMessage(ChatColor.RED + "你不能再创建更多的世界垃圾桶了！");
                             if(main.getConfig().getBoolean("Set.Debug")){
-                                main.getLogger().info("RashMax: " +RashMax);
-                                main.getLogger().info("Count: " +Count);
-                                main.getLogger().info("Default: " +main.getConfig().getInt("Set.DefaultRashCanMax"));
+                                consoleSay("RashMax: " +RashMax);
+                                consoleSay("Count: " +Count);
+                                consoleSay("Default: " +main.getConfig().getInt("Set.DefaultRashCanMax"));
                             }
                             player.sendMessage(message.find("ReachRashCanCount"));
 
@@ -425,7 +426,7 @@ public class TrashListener implements Listener {
 //                        player.sendMessage(ChatColor.BLUE+"您在世界垃圾桶中添加了物品: "+StringItemStack);
                         player.sendMessage(message.find("BanAddItem").replace("%ItemType%",StringItemStack));
                         if(main.getConfig().getBoolean("Set.Debug")){
-                            main.getLogger().info(ChatColor.BLUE+"物品: "+itemStack.getItemMeta().getDisplayName());
+                            consoleSay(ChatColor.BLUE+"物品: "+itemStack.getItemMeta().getDisplayName());
                         }
                     }else {
                         ItemSetString.remove(StringItemStack);
@@ -483,7 +484,7 @@ public class TrashListener implements Listener {
              GlobalItemSetString = new HashSet<>(main.getConfig().getStringList("GlobalBanItem"));
              if(main.getConfig().getBoolean("Set.Debug")){
                  for (String string : GlobalItemSetString) {
-                     main.getLogger().info("GlobalBan  Item: "+string);
+                     consoleSay("GlobalBan  Item: "+string);
                  }
              }
 //            if(WorldToLocation.get(world)!=null&&!WorldToLocation.get(world).getBanItemSet().isEmpty()){
@@ -512,7 +513,7 @@ public class TrashListener implements Listener {
 //                        player.sendMessage(ChatColor.BLUE+"您在世界垃圾桶中添加了物品: "+StringItemStack);
                         player.sendMessage(message.find("BanAddItem").replace("%ItemType%",StringItemStack));
                         if(main.getConfig().getBoolean("Set.Debug")){
-                            main.getLogger().info(ChatColor.BLUE+"物品: "+itemStack.getItemMeta().getDisplayName());
+                            consoleSay(ChatColor.BLUE+"物品: "+itemStack.getItemMeta().getDisplayName());
                         }
                     }else {
                         GlobalItemSetString.remove(StringItemStack);
@@ -592,10 +593,10 @@ public class TrashListener implements Listener {
 
 
                 if(world==null||strings.length!=3){
-//                    main.getLogger().info(ChatColor.RED+"配置文件中有一个空的世界名或者不正常的坐标");
-//                    main.getLogger().info(ChatColor.RED+"配置文件中有一个空的世界名或者不正常的坐标");
-//                    main.getLogger().info(ChatColor.RED+"世界名为："+WorldName+"坐标为："+locStr);
-                    main.getLogger().info(message.find("ConfigError").replace("%world%",WorldName).replace("%location%",locStr));
+//                    consoleSay(ChatColor.RED+"配置文件中有一个空的世界名或者不正常的坐标");
+//                    consoleSay(ChatColor.RED+"配置文件中有一个空的世界名或者不正常的坐标");
+//                    consoleSay(ChatColor.RED+"世界名为："+WorldName+"坐标为："+locStr);
+                    consoleSay(message.find("ConfigError").replace("%world%",WorldName).replace("%location%",locStr));
                     continue;
                 }
                 double x = Double.parseDouble(strings[0]);
@@ -639,10 +640,10 @@ public class TrashListener implements Listener {
 
 
                 if(world==null||strings.length!=3){
-//                    main.getLogger().info(ChatColor.RED+"配置文件中有一个空的世界名或者不正常的坐标");
-//                    main.getLogger().info(ChatColor.RED+"配置文件中有一个空的世界名或者不正常的坐标");
-//                    main.getLogger().info(ChatColor.RED+"世界名为："+WorldName+"坐标为："+locStr);
-                    main.getLogger().info(message.find("ConfigError").replace("%world%",WorldName).replace("%location%",locStr));
+//                    consoleSay(ChatColor.RED+"配置文件中有一个空的世界名或者不正常的坐标");
+//                    consoleSay(ChatColor.RED+"配置文件中有一个空的世界名或者不正常的坐标");
+//                    consoleSay(ChatColor.RED+"世界名为："+WorldName+"坐标为："+locStr);
+                    consoleSay(message.find("ConfigError").replace("%world%",WorldName).replace("%location%",locStr));
                     continue;
                 }
                 double x = Double.parseDouble(strings[0]);

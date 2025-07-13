@@ -17,6 +17,7 @@ import java.util.Set;
 
 import static org.worldlisttrashcan.WorldListTrashCan.WorldToLocation;
 import static org.worldlisttrashcan.WorldListTrashCan.main;
+import static org.worldlisttrashcan.message.consoleSay;
 
 public class data {
 
@@ -59,9 +60,9 @@ public class data {
 
 
                     if(world==null||strings.length!=3){
-//                    main.getLogger().info(ChatColor.RED+"配置文件中有一个空的世界名或者不正常的坐标");
-//                    main.getLogger().info(ChatColor.RED+"世界名为："+WorldName+"坐标为："+locStr);
-                        main.getLogger().info(message.find("ConfigError").replace("%world%",WorldName).replace("%location%",locStr));
+//                    consoleSay(ChatColor.RED+"配置文件中有一个空的世界名或者不正常的坐标");
+//                    consoleSay(ChatColor.RED+"世界名为："+WorldName+"坐标为："+locStr);
+                        consoleSay(message.find("ConfigError").replace("%world%",WorldName).replace("%location%",locStr));
                         flag = true;
                         continue;
                     }
@@ -78,7 +79,7 @@ public class data {
 
         }
         if(flag){
-            main.getLogger().info(message.find("HaveHomePlugin"));
+            consoleSay(message.find("HaveHomePlugin"));
         }
     }
 
@@ -92,8 +93,8 @@ public class data {
         }
         if((Count+nowCount)>=defaultCount){
             if (main.getConfig().getBoolean("Set.Debug")) {
-                main.getLogger().info("worldname2: "+world.getName());
-                main.getLogger().info("Count: "+Count+" nowCount: "+nowCount);
+                consoleSay("worldname2: "+world.getName());
+                consoleSay("Count: "+Count+" nowCount: "+nowCount);
 
             }
             data.getConfig().set("WorldData."+world.getName()+".RashMaxCount",Count+nowCount);
@@ -101,8 +102,8 @@ public class data {
             return Count+nowCount;
         }else {
             if (main.getConfig().getBoolean("Set.Debug")) {
-                main.getLogger().info("worldname1: "+world.getName());
-                main.getLogger().info("Count: "+Count+" nowCount: "+nowCount);
+                consoleSay("worldname1: "+world.getName());
+                consoleSay("Count: "+Count+" nowCount: "+nowCount);
             }
             data.getConfig().set("WorldData."+world.getName()+".RashMaxCount",defaultCount);
             data.saveData();

@@ -387,7 +387,7 @@ public final class WorldListTrashCan extends JavaPlugin {
 
 //                                    count++;
                                 }
-                            }, () -> main.getLogger().info("Error,Player is null"),60L);
+                            }, () -> consoleSay("Error,Player is null"),60L);
                         }else {
                             new BukkitRunnable(){
 
@@ -895,7 +895,7 @@ public final class WorldListTrashCan extends JavaPlugin {
                 }
                 int limit = Integer.parseInt(strings[1]);
                 worldLimits.put(entityType.name().toLowerCase(), limit);
-//            main.getLogger().info(ChatColor.GREEN + "成功设置 " + entityType.name() + " 的数量限制为 " + limit);
+//            consoleSay(ChatColor.GREEN + "成功设置 " + entityType.name() + " 的数量限制为 " + limit);
                 message.consoleSay(message.find("EntityCountSetOK").replace("%Count%",limit+"").replace("%Entity%",entityType.name()));
             }
             BanWorlds.addAll(main.getConfig().getStringList("WorldEntityLimitCount.BanWorldNameList"));
@@ -924,7 +924,7 @@ public final class WorldListTrashCan extends JavaPlugin {
                 if (entityType == null) {
                     //EntityCountSetOK: "%PluginTitle% 成功设置各世界该 %Entity% 实体默认为 %Count% 个"
                     //EntityCountSetError: "%PluginTitle% 实体类型错误！可选的实体类型包括：%EntityTypes%"
-//                main.getLogger().info(message.find("EntityCountSetError").replace("%EntityName%",strings[0]).replace("%EntityTypes%",getEntityTypes()));
+//                consoleSay(message.find("EntityCountSetError").replace("%EntityName%",strings[0]).replace("%EntityTypes%",getEntityTypes()));
                     continue;
                 }
                 int limit = Integer.parseInt(strings[1]);
@@ -932,8 +932,8 @@ public final class WorldListTrashCan extends JavaPlugin {
                 int clearCount = Integer.parseInt(strings[3]);
 //                GatherLimits.put(entityType.name().toUpperCase(), new int[]{limit, range, clearCount});
                 GatherLimits.put(entityType, new int[]{limit, range, clearCount});
-//            main.getLogger().info(ChatColor.GREEN + "成功设置 " + entityType.name() + " 的数量限制为 " + limit);
-//                main.getLogger().info(message.find("EntityCountSetOK").replace("%Count%",limit+"").replace("%Entity%",entityType.name()));
+//            consoleSay(ChatColor.GREEN + "成功设置 " + entityType.name() + " 的数量限制为 " + limit);
+//                consoleSay(message.find("EntityCountSetOK").replace("%Count%",limit+"").replace("%Entity%",entityType.name()));
             }
             GatherBanWorlds.addAll(main.getConfig().getStringList("GatherEntityLimitCount.BanWorldNameList"));
 

@@ -56,12 +56,12 @@ public class LimitMain implements Listener {
 //    public LimitMain() {
 //        EntityType entityType = getEntityType("Villager");
 //        if (entityType == null) {
-//            main.getLogger().info(ChatColor.RED + "实体类型错误！可选的实体类型包括：" + getEntityTypes());
+//            consoleSay(ChatColor.RED + "实体类型错误！可选的实体类型包括：" + getEntityTypes());
 ////            return true;
 //        }
 //        int limit = 3;
 //        this.worldLimits.put("world" + "." + entityType.name(), Integer.valueOf(limit));
-//        main.getLogger().info(ChatColor.GREEN + "成功设置 " + entityType.name() + " 的数量限制为 " + limit);
+//        consoleSay(ChatColor.GREEN + "成功设置 " + entityType.name() + " 的数量限制为 " + limit);
 //
 //    }
 
