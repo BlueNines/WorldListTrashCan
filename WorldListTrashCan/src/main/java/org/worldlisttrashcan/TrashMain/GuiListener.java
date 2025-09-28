@@ -63,16 +63,19 @@ public class GuiListener implements Listener {
             int count = event.getRawSlot();
             if(count>=45 && count<=53){
                 //上一页
-                if(count==46&&inventory.getItem(count).getType()==Material.ARROW){
+                if(count==46 && PageIndex>0){
+//                if(count==46&&inventory.getItem(count).getType()==Material.ARROW){
                     player.openInventory(GlobalTrashList.get(PageIndex-1));
                 //下一页
-                }else if(count==52&&inventory.getItem(count).getType()==Material.ARROW){
+                }else if(count==52 && PageIndex<GlobalTrashList.size()-1){
+//                }else if(count==52&&inventory.getItem(count).getType()==Material.ARROW){
                     player.openInventory(GlobalTrashList.get(PageIndex+1));
                 }
             }else if (count>=0 && count<=44) {
 
                 // 如果玩家没有使用权限
                 if (!player.isOp()&&!player.hasPermission("WorldListTrashCan.GlobalTrashTakeItem")) {
+//                    System.out.println("layer.hasPermission(\"WorldListTrashCan.GlobalTrashTakeItem\"))");
                     return;
                 }
 
@@ -115,7 +118,7 @@ public class GuiListener implements Listener {
                         String finalItem = getItemStackAllString(itemStack,amount);
                         itemStack.setAmount(0);
                         if(logFlag) {
-                            startLogToFileTask(playerName, "-", finalItem);
+                            startLogToFileTask(playerName, "-global", finalItem);
                         }
                     }else {
                         //没加进去的物品
@@ -126,13 +129,13 @@ public class GuiListener implements Listener {
                             String finalItem = getItemStackAllString(itemStack,amount-shengyu);
 
                             if(logFlag){
-                                startLogToFileTask(playerName, "-", finalItem);
+                                startLogToFileTask(playerName, "-global", finalItem);
                             }
                         }
                     }
                 }
 
-            }else if (count>=54 && count<=89 && main.getConfig().getBoolean("Set.GlobalTrash.AllowPutItemInGlobalTrash")) {
+            }else if (count>=54 && count<=89 && main.getConfig().getBoolean("Set.GlobalTrash.AllowPutItemInGlobalTrash",true)) {
 
                 // 如果玩家没有放入权限
                 if (!player.isOp()&&!player.hasPermission("WorldListTrashCan.GlobalTrashPutItem")) {
@@ -151,7 +154,7 @@ public class GuiListener implements Listener {
                         String finalItem = getItemStackAllString(itemStack,amount);
                         itemStack.setAmount(0);
                         if(logFlag) {
-                            startLogToFileTask(playerName, "+", finalItem);
+                            startLogToFileTask(playerName, "+global", finalItem);
                         }
                     }else {
                         //没加进去的物品
@@ -161,7 +164,7 @@ public class GuiListener implements Listener {
                         if (amount-shengyu>0){
                             String finalItem = getItemStackAllString(itemStack,amount-shengyu);
                             if(logFlag){
-                                startLogToFileTask(playerName, "+", finalItem);
+                                startLogToFileTask(playerName, "+global", finalItem);
                             }
                         }
                     }

@@ -19,6 +19,44 @@
 # 5.7.2版本之后可用%WTC_ClearTime%变量查看距离下一次清理垃圾的时间
 # papi指令/papi parse --null %WTC_ClearTime%
 
+# 所有权限
+#  WorldListTrashCan.Main:
+#    default: true
+#    description: 玩家是否能够创建世界垃圾桶
+#  WorldListTrashCan.BanGui:
+#    description: 将不回收的物品加入，如果重复加入同一物品则是取消不回收该物品
+#    default: true
+#  WorldListTrashCan.GlobalTrashOpen:
+#    description: 打开公共垃圾桶
+#    default: true
+#  WorldListTrashCan.GlobalTrashTakeItem:
+#    description: 玩家使用公共垃圾桶（从公共垃圾桶中取出物品）
+#    default: true
+#  WorldListTrashCan.GlobalTrashPutItem:
+#    description: 玩家使用公共垃圾桶（从公共垃圾桶中放入物品）
+#  WorldListTrashCan.PersonalTrashTakeItem:
+#    description: 玩家使用个人垃圾桶（从个人垃圾桶中取出物品）
+#    default: true
+#  WorldListTrashCan.PersonalTrashPutItem:
+#    description: 玩家使用个人垃圾桶（从个人垃圾桶中放入物品）
+#    default: true
+#  WorldListTrashCan.help:
+#    description: 帮助
+#    default: true
+#  WorldListTrashCan.GlobalBan:
+#    description: 公共垃圾桶黑名单gui
+#    default: false
+#  WorldListTrashCan.Look:
+#    description: 点击实体获取实体类型
+#    default: false
+#  WorldListTrashCan.DropMode:
+#    description: 打开禁止丢弃模式
+#    default: true
+#  WorldListTrashCan.PlayerTrash:
+#    description: 玩家打开个人垃圾桶的权限
+#    default: true
+
+
 # 留空符号是[] ，而不是简单的删除所有内容！
 Set:
   Debug: false
@@ -33,9 +71,34 @@ Set:
     #玩家从公共垃圾桶中拿出物品时的间隔（拿取CD,单位毫秒）
     #设为0则无视间隔，2000（即2秒） 500 （即0.5秒）
     Delay: 500
-    #是否允许玩家将背包物品放入公共垃圾桶
-    #默认false
-    AllowPutItemInGlobalTrash: false
+    #是否允许玩家将背包物品放入公共垃圾桶 上面有权限控制（下面的AllowPutItemInGlobalTrash选项已弃用）
+    #默认true
+#    AllowPutItemInGlobalTrash: true
+
+    GlobalItems:
+      # 上一页的物品配置（名字在语言文件改）
+      BackItem:
+        # 如果你不配置，就使用插件的默认配置 箭矢
+#        Material: "ARROW"
+        # 当你的版本大于1.16.5时，可以设置全球垃圾桶的箭矢和玻璃板物品的modelId
+        # -1 为不生效
+        ModelId: -1
+      # 下一页的物品配置（名字在语言文件改）
+      NextItem:
+        # 如果你不配置，就使用插件的默认配置 箭矢
+#        Material: "ARROW"
+        # 当你的版本大于1.16.5时，可以设置全球垃圾桶的箭矢和玻璃板物品的modelId
+        # 该功能需要重启才会同步，因为物品和界面已经生成了
+        # -1 为不生效
+        ModelId: -1
+      # 玻璃背景板
+      BackgroundItem:
+        # 如果你不配置，就使用插件的默认配置 玻璃板
+#        Material: "BLACK_STAINED_GLASS_PANE"
+        # 当你的版本大于1.16.5时，可以设置全球垃圾桶的箭矢和玻璃板物品的modelId
+        # 该功能需要重启才会同步，因为物品和界面已经生成了
+        # -1 为不生效
+        ModelId: -1
     #在每N次扫地时，先清理公共垃圾桶内原有物品，后再将物品加入公共垃圾桶
     #如果下面的数是3，则在三次扫地之后，自动清理公共垃圾桶
     #如果为-1，则不会清理公共垃圾桶
@@ -123,6 +186,7 @@ Set:
 #        Coins: 10.0
         Coins: -1
 
+
     # 对玩家丢弃的物品进行处理，使用条件：服务器版本＞=1.16.5(如果你的版本刚好=1.16.5，那只有paper端兼容) 否则下面选项无效
     # 简单判断可以先开启，然后reload的时候观察 PlayerAttemptPickupItemEvent 事件是否被正常注册
     # 如果你是模组服，出现了同一物品通过模组的特殊漏斗导致无法堆叠的情况，则关闭该功能即可
@@ -189,7 +253,7 @@ Set:
     - -2;&a公共垃圾桶的物品已刷新;SEGMENTED_20;GREEN
 
   #是否启用ActionBar的提示方式(经验条上面的提示字)
-  #ActionBar 也支持使用RGB（版本1.16.5+）
+  #ActionBar 也支持使用RGB（版本1.16.5+ ~ 1.21.5 在1.21.5以上的版本的RGB Actionbar 正在努力兼容中！ 你也可以尝试使用papi的RGB变量进行转换）
   ActionBarFlag: true
   #当读秒到达以下数字时会进行一次信息的发送   如  &d&l还剩下 60 秒清理物品和实体
   #%DealItemSum%为处理的物品总数（包括回收进任意垃圾桶的也包括被清理的）

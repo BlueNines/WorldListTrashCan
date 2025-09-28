@@ -9,13 +9,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import static org.worldlisttrashcan.IsVersion.compareVersions;
+import static org.worldlisttrashcan.IsVersion.isServerVersionLowerThan;
 
 public class NotPickArrowListener implements Listener {
 
@@ -43,7 +41,7 @@ public class NotPickArrowListener implements Listener {
             // 获取箭矢的拾取状态
 //            Arrow.PickupStatus pickupStatus = arrow.getPickupStatus();
             //如果版本小于1.13.0
-            if(compareVersions("1.13.0")) {
+            if(isServerVersionLowerThan("1.13.0")) {
                 // 判断箭矢是否可以被拾取.ALWAYS
 
                 if (ArrowList.contains(arrow)) {

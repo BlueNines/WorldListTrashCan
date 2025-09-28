@@ -186,7 +186,7 @@ public class TrashListener implements Listener {
                 Location signLocation = sign.getLocation();
                 Location chestLocation;
 
-                if(IsVersion.compareVersions("1.13.0")){
+                if(IsVersion.isServerVersionLowerThan("1.13.0")){
                     chestLocation = getChestLocation1_12(signLocation);
                 }else {
                     chestLocation = getChestLocation1_13(signLocation);
@@ -347,7 +347,7 @@ public class TrashListener implements Listener {
                 if(line.contains(main.getConfig().getString("Set.SighCheckedName"))){
                     Location chestLocation;
                     //如果版本小于1.13.0
-                    if(IsVersion.compareVersions("1.13.0")){
+                    if(IsVersion.isServerVersionLowerThan("1.13.0")){
                         chestLocation = getChestLocation1_12(location);
                     }else {
                         chestLocation = getChestLocation1_13(location);

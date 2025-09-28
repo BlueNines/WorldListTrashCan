@@ -25,6 +25,8 @@ import static org.worldlisttrashcan.Method.Method.papiReplace;
 import static org.worldlisttrashcan.TrashMain.GlobalTrashGui.ClearContainer;
 import static org.worldlisttrashcan.TrashMain.TrashListener.GlobalItemSetString;
 import static org.worldlisttrashcan.WorldListTrashCan.*;
+import static org.worldlisttrashcan.log.customLogToFile;
+import static org.worldlisttrashcan.log.logFlag;
 import static org.worldlisttrashcan.message.*;
 
 public class FoliaClearItemsTask {
@@ -187,11 +189,12 @@ public class FoliaClearItemsTask {
                             .replace("%DealItemSum%", DealItemSum + "")
                             .replace("%EntitySum%", EntitySum + "")
                             .replace("%ClearGlobalCount%", EveryClearGlobalTrash - ClearCount + ""));
-                    for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
-                        if (offlinePlayer == null) {
-                            continue;
-                        }
-                        Player player = offlinePlayer.getPlayer();
+//                    for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+//                        if (offlinePlayer == null) {
+//                            continue;
+//                        }
+//                        Player player = offlinePlayer.getPlayer();
                         if (bossBar.getPlayers().contains(player)) {
                             //如果这个玩家有bossbar了
                         } else {
@@ -228,10 +231,14 @@ public class FoliaClearItemsTask {
 //                            message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, ChatClickCommand));
 //                            player.spigot().sendMessage(message);
                             sendChatMessageToAction(player,text,ClickEvent.Action.RUN_COMMAND,ChatClickCommand);
-
+                            if(logFlag){
+                                customLogToFile(text);
+                            }
                         }else {
                             player.sendMessage(color(text));
                         }
+
+
                     }
                     if (ChatConsoleLogFlag){
                         consoleSay(ChatIntToMessage.get(count).replace("%GlobalTrashAddSum%", GlobalTrashItemSum + "").replace("%DealItemSum%", DealItemSum + "").replace("%EntitySum%", EntitySum + "").replace("%ClearGlobalCount%", EveryClearGlobalTrash - ClearCount + ""));

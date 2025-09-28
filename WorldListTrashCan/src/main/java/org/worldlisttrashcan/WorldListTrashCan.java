@@ -215,13 +215,21 @@ public final class WorldListTrashCan extends JavaPlugin {
         IsPaperServer = AutoCheckPaperServer();
 
 
-        Is1_12_1_16Server = compareVersions("1.16.0");
+        Is1_12_1_16Server = IsVersion.isServerVersionLowerThan("1.16.0");
 
+        Is1_16_1_20Server = !IsVersion.isServerVersionLowerThan("1.16.0");
 
+        Is1_21_1_21_XServer = !IsVersion.isServerVersionLowerThan("1.21.0");
 
-        Is1_16_1_20Server = !compareVersions("1.16.0");
+        Is1_21_1_21_5Server = !IsVersion.isServerVersionLowerThan("1.21.0") && IsVersion.isServerVersionLowerThan("1.21.6");
 
-        Is1_21_1_20Server = !compareVersions("1.21.0");
+        Is1_21_5_21_NServer = !IsVersion.isServerVersionLowerThan("1.21.5");
+
+//        System.out.println("Is1_12_1_16Server "+Is1_12_1_16Server);
+//        System.out.println("Is1_16_1_20Server "+Is1_16_1_20Server);
+//        System.out.println("Is1_21_1_21_XServer "+Is1_21_1_21_XServer);
+//        System.out.println("Is1_21_1_21_5Server "+Is1_21_1_21_5Server);
+//        System.out.println("Is1_21_5_21_NServer "+Is1_21_5_21_NServer);
 
         if (!setupEconomy() ) {
             message.consoleSay("&c没有找到Vault插件，已自动关闭相关功能");
@@ -721,11 +729,6 @@ public final class WorldListTrashCan extends JavaPlugin {
         GlobalItemSetString = new HashSet<>(main.getConfig().getStringList("GlobalBanItem"));
         int MaxCount = main.getConfig().getInt("Set.GlobalTrash.MaxPage");
         globalTrashGui = new GlobalTrashGui(GlobalTrashList,MaxCount);
-
-
-
-
-
 
 
         if(IsFoliaServer){

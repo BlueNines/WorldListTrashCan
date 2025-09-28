@@ -24,7 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.worldlisttrashcan.IsVersion.Is1_12_1_16Server;
-import static org.worldlisttrashcan.IsVersion.compareVersions;
+import static org.worldlisttrashcan.IsVersion.isServerVersionLowerThan;
 import static org.worldlisttrashcan.WorldListTrashCan.main;
 public class message {
 
@@ -42,7 +42,7 @@ public class message {
 
 
 
-    static String flag = !compareVersions("1.16.0") ? "":"1.12.2";
+    static String flag = !isServerVersionLowerThan("1.16.0") ? "":"1.12.2";
 
 
     static public String chanceMessage;
