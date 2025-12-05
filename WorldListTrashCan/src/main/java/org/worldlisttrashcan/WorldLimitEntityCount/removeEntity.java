@@ -1,6 +1,7 @@
 package org.worldlisttrashcan.WorldLimitEntityCount;
 
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -39,6 +40,16 @@ public class removeEntity {
 //        EntityType entityType = entity.getType();
         String entityType = entity.getName();
         entityType = entityType.toUpperCase();
+
+        //检查实体是否在船上，如果配置开启且实体在船上，则跳过处理
+        boolean ignoreEntitiesInBoat = main.getConfig().getBoolean("Set.ClearEntity.IgnoreEntitiesInBoat");
+        if (ignoreEntitiesInBoat && entity.isInsideVehicle()) {
+            Entity vehicle = entity.getVehicle();
+            if (vehicle instanceof Boat) {
+                //如果实体在船上，跳过处理
+                return;
+            }
+        }
 
 
 //        int limit = GatherLimits.get(entityType.name())[0];

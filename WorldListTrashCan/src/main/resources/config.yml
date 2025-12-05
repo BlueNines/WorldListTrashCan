@@ -157,6 +157,8 @@ Set:
     ClearProjectile: true
     #是否清理被命名过的生物
     ClearReNameEntity: false
+    #是否忽略在船上的生物（如果为true，则不会清理坐在船上的生物）
+    IgnoreEntitiesInBoat: true
     #如果在以下名单内，不会清理（白名单）
     WhiteNameList:
       - VILLAGER
