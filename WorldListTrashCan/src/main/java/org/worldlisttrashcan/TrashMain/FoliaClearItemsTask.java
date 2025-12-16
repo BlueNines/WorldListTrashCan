@@ -148,6 +148,7 @@ public class FoliaClearItemsTask {
         boolean ClearAnimals = main.getConfig().getBoolean("Set.ClearEntity.ClearAnimals");
         boolean ClearProjectile = main.getConfig().getBoolean("Set.ClearEntity.ClearProjectile");
         boolean ClearReNameEntity = main.getConfig().getBoolean("Set.ClearEntity.ClearReNameEntity");
+        boolean IgnoreEntitiesInBoat = main.getConfig().getBoolean("Set.ClearEntity.IgnoreEntitiesInBoat");
 
         List<String> WhiteNameList = main.getConfig().getStringList("Set.ClearEntity.WhiteNameList");
         List<String> BlackNameList = main.getConfig().getStringList("Set.ClearEntity.BlackNameList");
@@ -514,6 +515,15 @@ public class FoliaClearItemsTask {
 //                                blockState.update();
                                             } else {
                                                 if (ClearEntityFlag) {
+
+                                                    //检查实体是否在船上
+                                                    if (IgnoreEntitiesInBoat && entity.isInsideVehicle()) {
+                                                        Entity vehicle = entity.getVehicle();
+                                                        if (vehicle instanceof Boat) {
+                                                            //如果实体在船上，跳过清理
+                                                            continue;
+                                                        }
+                                                    }
 
                                                     if (BlackNameList.contains(entity.getType().toString().toLowerCase()) ||
                                                             BlackNameList.contains(entity.getName().toLowerCase())
