@@ -156,16 +156,21 @@ Set:
     #是否清理被命名过的生物
     ClearReNameEntity: false
     #是否忽略在船上的生物（如果为true，则不会清理坐在船上的生物）
-    IgnoreEntitiesInBoat: true
+    IgnoreEntitiesInBoat: false
     #如果在以下名单内，不会清理（白名单）
+    # 如果你不知道实体类型是什么，请使用/wtc look查看实体类型 其他地方的不准确！
+    # 支持正则表达式/模糊匹配 *pig*
     WhiteNameList:
-      - VILLAGER
-      - WITHER
-      - Ender Dragon
+      - "VILLAGER"
+      - "*golem*"  # 任何包含傀儡的类型   如果填 golem* 则匹配golem开头的实体类型
+      - "WITHER"
+      - "Ender Dragon"
     #如果在以下名单内，会清理（黑名单）
+    # 如果你不知道实体类型是什么，请使用/wtc look查看实体类型 其他地方的不准确！
+    # 支持正则表达式/模糊匹配 *pig*
     BlackNameList:
       #这是拔刀剑的刀挂台以及拔刀的实体
-      - FLAMMPFEIL.SLASHBLADE_BLADESTAND
+      - "FLAMMPFEIL.SLASHBLADE_BLADESTAND"
 
   #仙人掌，岩浆触碰到的物品的处理
   PersonalTrashCan:
