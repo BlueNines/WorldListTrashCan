@@ -41,12 +41,22 @@ public class BukkitPlayerMoveEvent implements Listener {
 //            }
 
             if (IsFoliaServer){
-                Bukkit.getRegionScheduler().run(main, player.getLocation(), new Consumer<ScheduledTask>() {
+//                Bukkit.getRegionScheduler().run(main, player.getLocation(), new Consumer<ScheduledTask>() {
+//                    @Override
+//                    public void accept(ScheduledTask scheduledTask) {
+//                        dealPlayer(player);
+//                    }
+//                });
+
+                player.getScheduler().run(main, new Consumer<ScheduledTask>() {
                     @Override
                     public void accept(ScheduledTask scheduledTask) {
                         dealPlayer(player);
                     }
-                });
+                },null);
+
+
+
             }else {
                 dealPlayer(player);
             }

@@ -1,29 +1,23 @@
 package org.worldlisttrashcan.SpeakSystem;
 
 
-
-import io.papermc.paper.event.player.AsyncChatEvent;
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.worldlisttrashcan.WorldListTrashCan;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
-import static org.worldlisttrashcan.IsVersion.IsFoliaServer;
-import static org.worldlisttrashcan.WorldListTrashCan.main;
+import static org.worldlisttrashcan.Method.Method.useCommand;
 
 public class QuickSpeakListener implements Listener {
     public static Map<Player,Long> PlayerToChatMessage = new HashMap<>();
 
     String NotSpeakMessage = "不要刷屏";
+    String NotSpeakCommand = "";
 
     double Time = 2;
 
@@ -36,6 +30,7 @@ public class QuickSpeakListener implements Listener {
 //    Message: "&c请不要刷屏"
     public void Init(){
         NotSpeakMessage = WorldListTrashCan.main.getConfig().getString("ChatSet.QuickSendMessage.Message");
+        NotSpeakCommand = WorldListTrashCan.main.getConfig().getString("ChatSet.QuickSendMessage.Command");
         Time = WorldListTrashCan.main.getConfig().getDouble("ChatSet.QuickSendMessage.Time");
         PlayerToChatMessage.clear();
     }
@@ -59,6 +54,8 @@ public class QuickSpeakListener implements Listener {
             if (interval < Time) {
                 event.setCancelled(true);
                 player.sendMessage(NotSpeakMessage);
+
+                useCommand(player,NotSpeakCommand);
             }else {
                 PlayerToChatMessage.put(player,System.currentTimeMillis());
             }

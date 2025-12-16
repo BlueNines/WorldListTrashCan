@@ -1,6 +1,6 @@
 package org.worldlisttrashcan.SpeakSystem;
 
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,15 +12,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import static org.worldlisttrashcan.IsVersion.IsFoliaServer;
+import static org.worldlisttrashcan.Method.Method.useCommand;
 import static org.worldlisttrashcan.WorldListTrashCan.main;
 
 public class QuickUseCommandListener implements Listener {
 //    public static Map<Player,String> PlayerToCommand = new HashMap<>();
     public static Map<Player,Long> PlayerToCommand = new HashMap<>();
     String NotUseCommandMessage = "不要频繁用指令";
+    String NotUseCommandCommand = "";
 
     double Time = 2;
     List<String> WhiteCommands = new ArrayList<>();
@@ -44,6 +45,7 @@ public class QuickUseCommandListener implements Listener {
 //      - suicide
     public void Init(){
         NotUseCommandMessage = WorldListTrashCan.main.getConfig().getString("ChatSet.QuickUseCommand.Message");
+        NotUseCommandCommand = WorldListTrashCan.main.getConfig().getString("ChatSet.QuickUseCommand.Command");
         Time = WorldListTrashCan.main.getConfig().getDouble("ChatSet.QuickUseCommand.Time");
         WhiteCommands = WorldListTrashCan.main.getConfig().getStringList("ChatSet.QuickUseCommand.WhiteList");
         PlayerToCommand.clear();
@@ -76,6 +78,10 @@ public class QuickUseCommandListener implements Listener {
             if (interval < Time) {
                 event.setCancelled(true);
                 player.sendMessage(NotUseCommandMessage);
+
+
+                useCommand(player,NotUseCommandCommand);
+
             }else {
                 PlayerToCommand.put(player,System.currentTimeMillis());
             }

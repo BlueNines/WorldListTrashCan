@@ -64,7 +64,7 @@ BanWorldTrashCanInFoliaServer: "%PluginTitle% &#9AFF9A在Folia服务器中无法
 GlobalTrashPickupDelay: "%PluginTitle% &#9AFF9A你还需要等待%time%秒才能再次拿取垃圾桶物品"
 
 HelpTitle:
-  - "&l&#7472a5——————&r&7【&#a1b2ffWorldListTrashCan&7】&l&#7472a5——————"
+  - "&l&#7472a5———&addd———&r&7【&#a1b2ffWorldListTrashCan&7】&l&#7472a5——————"
   - "&#ccffbbWorldListTrashCan可简写为WTC 如/wtc reload"
   - "&#ccffbb/WorldListTrashCan GlobalTrash &#FFB5C5打开公共垃圾桶"
   - "&#ccffbb/WorldListTrashCan help &#FFB5C5查看帮助"

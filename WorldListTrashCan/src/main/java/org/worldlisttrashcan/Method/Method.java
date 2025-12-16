@@ -1,8 +1,6 @@
 package org.worldlisttrashcan.Method;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -13,6 +11,7 @@ import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.worldlisttrashcan.message;
 
 import java.util.ArrayList;
@@ -20,9 +19,32 @@ import java.util.List;
 import java.util.Map;
 
 import static org.worldlisttrashcan.IsVersion.*;
+import static org.worldlisttrashcan.WorldListTrashCan.main;
 import static org.worldlisttrashcan.WorldListTrashCan.papi;
 
 public class Method {
+    // 执行命令
+    public static void useCommand(Player player,String Command){
+        if (Command!=null && !Command.isEmpty()) {
+            // 执行命令
+            if (IsFoliaServer) {
+                Bukkit.getGlobalRegionScheduler().run(main, scheduledTask -> {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Command
+                            .replace("%player%", player.getName()));
+                });
+            } else {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Command
+                                .replace("%player%", player.getName()));
+                    }
+                }.runTask(main);
+            }
+        }
+    }
+
+
 
     //获取物品完整描述字符串
     public static String getItemStackAllString(ItemStack itemStack,int amount){
