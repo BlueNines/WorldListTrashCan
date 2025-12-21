@@ -623,7 +623,9 @@ public class FoliaClearItemsTask {
 
                                                         //                            NowChatIntToInt.put(finalCount - 3, -2);
                                                     } else {
-                                                        PrintCountMessage(-1);
+                                                        if (EveryClearGlobalTrash!=-1) {
+                                                            PrintCountMessage(-1);
+                                                        }
                                                     }
 
                                                     Bukkit.getAsyncScheduler().runDelayed(main, new Consumer<ScheduledTask>() {
