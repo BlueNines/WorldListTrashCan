@@ -366,11 +366,37 @@ public class FoliaClearItemsTask {
                 }
 
                 if (count == 0) {
-//                    System.out.println(" count == 0 ");
 
                     count--;
 
                     try {
+
+                        if (finalCount!=0) {
+//                            Bukkit.getAsyncScheduler().runDelayed(main, scheduledTask1 -> {
+                            ClearCount.addAndGet(1);
+//                                if (ClearCount.get() == EveryClearGlobalTrash) {
+//                                    //清理公共垃圾桶
+//                                    ClearCount.set(0);
+//                                    ClearContainer(GlobalTrashList);
+//                                    PrintCountMessage(-2);
+//                                }
+//                            }, 3, TimeUnit.SECONDS);
+
+//                            ClearCount.addAndGet(1);
+
+                            if (ClearCount.get() == EveryClearGlobalTrash) {
+                                //清理公共垃圾桶
+//                                ClearCount.set(0);
+                                ClearContainer(GlobalTrashList);
+//                                PrintCountMessage(-2);
+                            }
+                        }
+
+
+
+
+
+
                         WorldList.clear();
                         WorldList = Bukkit.getWorlds();
 
@@ -612,16 +638,15 @@ public class FoliaClearItemsTask {
                                             if (finalCount!=0) {
                                                 Bukkit.getAsyncScheduler().runDelayed(main, scheduledTask1 -> {
 
-                                                    ClearCount.addAndGet(1);
+//                                                    ClearCount.addAndGet(1);
 
                                                     if (ClearCount.get() == EveryClearGlobalTrash) {
                                                         //清理公共垃圾桶
                                                         ClearCount.set(0);
-                                                        ClearContainer(GlobalTrashList);
+//                                                        ClearContainer(GlobalTrashList);
 
                                                         PrintCountMessage(-2);
 
-                                                        //                            NowChatIntToInt.put(finalCount - 3, -2);
                                                     } else {
                                                         if (EveryClearGlobalTrash!=-1) {
                                                             PrintCountMessage(-1);

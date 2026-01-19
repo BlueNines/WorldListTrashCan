@@ -11,33 +11,44 @@ import static org.worldlisttrashcan.system.limitentity.removeEntity.dealEntity;
 
 
 public class PaperEntityMoveEvent implements Listener {
+
+    int count = 0;
+
+
     @EventHandler
     public void EntityMoveEvent(EntityMoveEvent event){
 
-        if(GatherLimitFlag){
+        count++;
 
-            Entity entity = event.getEntity();
+        if (count > 50){
+            count = 0;
+            if(GatherLimitFlag){
 
-            //如果没血了就不处理
-            if (((LivingEntity) entity).getHealth() <= 0) {
+                Entity entity = event.getEntity();
+
+                //如果没血了就不处理
+                if (((LivingEntity) entity).getHealth() <= 0) {
 //                System.out.println("return 了1");
-                return;
-            }
+                    return;
+                }
 
 //            System.out.println("000 "+entity.getName());
-            if (GatherBanWorlds.contains(entity.getWorld().getName())) {
-                return;
-            }
+                if (GatherBanWorlds.contains(entity.getWorld().getName())) {
+                    return;
+                }
 //            EntityType entityType = entity.getType();
-            String entityType = entity.getName();
+                String entityType = entity.getName();
 //            System.out.println("entityType.name() "+entityType.name());
 
 //            System.out.println("111 "+entity.getName());
 
-            if (GatherLimits.containsKey(entityType.toUpperCase())) {
-                dealEntity(entity);
+                if (GatherLimits.containsKey(entityType.toUpperCase())) {
+                    dealEntity(entity);
+                }
             }
         }
+
+
     }
 
 }

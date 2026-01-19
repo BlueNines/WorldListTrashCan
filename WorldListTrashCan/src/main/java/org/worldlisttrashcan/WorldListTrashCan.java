@@ -264,6 +264,7 @@ public final class WorldListTrashCan extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(bukkitPlayerMoveEvent, this);
         if(AutoCheckEntityMoveEventServer()){
 //            System.out.println("1");
+            // TODO 有服务器出现了卡顿情况，考虑暂时不用实体移动事件
             Bukkit.getPluginManager().registerEvents(paperEntityMoveEvent, this);
         }else {
 //            System.out.println("2");
