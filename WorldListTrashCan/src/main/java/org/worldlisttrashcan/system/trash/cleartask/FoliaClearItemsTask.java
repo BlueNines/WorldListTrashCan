@@ -158,7 +158,7 @@ public class FoliaClearItemsTask {
 //
 //        List<String> WhiteNameList = main.getConfig().getStringList("Set.ClearEntity.WhiteNameList");
 //        List<String> BlackNameList = main.getConfig().getStringList("Set.ClearEntity.BlackNameList");
-//        //全部转换为小写
+//        //全部转换为小�?
 //        BlackNameList.replaceAll(String::toLowerCase);
 //        WhiteNameList.replaceAll(String::toLowerCase);
 
@@ -166,14 +166,14 @@ public class FoliaClearItemsTask {
         List<String> WhiteNameList = main.getConfig().getStringList("Set.ClearEntity.WhiteNameList");
         List<String> BlackNameList = main.getConfig().getStringList("Set.ClearEntity.BlackNameList");
 
-        //全部转换为小写
+        //全部转换为小�?
         BlackNameList.replaceAll(String::toLowerCase);
         WhiteNameList.replaceAll(String::toLowerCase);
 
         EntityCleanMatcher matcher = new EntityCleanMatcher(
-                // 白名单
+                // 白名�?
                 WhiteNameList,
-                // 黑名单
+                // 黑名�?
                 BlackNameList
         );
 
@@ -200,7 +200,7 @@ public class FoliaClearItemsTask {
 
             public void PrintCountMessage(int count) {
 
-                //如果EveryClearGlobalTrash==-1，且count==-1，则不提示
+                //如果EveryClearGlobalTrash==-1，且count==-1，则不提�?
 //                if (EveryClearGlobalTrash == -1 && count == -1) {
 //                    return;
 //                }
@@ -221,7 +221,7 @@ public class FoliaClearItemsTask {
 //                        }
 //                        Player player = offlinePlayer.getPlayer();
                         if (bossBar.getPlayers().contains(player)) {
-                            //如果这个玩家有bossbar了
+                            //如果这个玩家有bossbar�?
                         } else {
                             //玩家没有bossbar
                             if (player != null) {
@@ -242,31 +242,40 @@ public class FoliaClearItemsTask {
                 }
 
                 if (ChatFlag && ChatIntToMessage.containsKey(count)) {
+
+                    String text = ChatIntToMessage.get(count).replace("%GlobalTrashAddSum%", GlobalTrashItemSum + "")
+                            .replace("%DealItemSum%", DealItemSum + "").replace("%EntitySum%", EntitySum + "")
+                            .replace("%ClearGlobalCount%", EveryClearGlobalTrash - ClearCount.get() + "");
+
+
+                    //如果是最后一次播�?
+                    if(count==0&&(ChatClickCommand!=null&&!ChatClickCommand.isEmpty())) {
+                        if (logFlag) {
+                            customLogToFile(text);
+                        }
+                    }
+
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        String text = ChatIntToMessage.get(count).replace("%GlobalTrashAddSum%", GlobalTrashItemSum + "")
-                                .replace("%DealItemSum%", DealItemSum + "").replace("%EntitySum%", EntitySum + "")
-                                .replace("%ClearGlobalCount%", EveryClearGlobalTrash - ClearCount.get() + "");
                         text = papiReplace(text,player);
 
 //                        BaseComponent[] components = colorToBaseComponent(text);
 
-                        //如果是最后一次播报
+                        //如果是最后一次播�?
                         if(count==0&&(ChatClickCommand!=null&&!ChatClickCommand.isEmpty())){
 //                            TextComponent message = new TextComponent(components);
 //                            message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, ChatClickCommand));
 //                            player.spigot().sendMessage(message);
                             sendChatMessageToAction(player,text,ClickEvent.Action.RUN_COMMAND,ChatClickCommand);
-                            if(logFlag){
-                                customLogToFile(text);
-                            }
+//                            if(logFlag){
+//                                customLogToFile(text);
+//                            }
                         }else {
                             player.sendMessage(color(text));
                         }
 
-
                     }
                     if (ChatConsoleLogFlag){
-                        consoleSay(ChatIntToMessage.get(count).replace("%GlobalTrashAddSum%", GlobalTrashItemSum + "").replace("%DealItemSum%", DealItemSum + "").replace("%EntitySum%", EntitySum + "").replace("%ClearGlobalCount%", EveryClearGlobalTrash - ClearCount.get() + ""));
+                        consoleSay(text);
                     }
 
                 }
@@ -375,7 +384,7 @@ public class FoliaClearItemsTask {
 //                            Bukkit.getAsyncScheduler().runDelayed(main, scheduledTask1 -> {
                             ClearCount.addAndGet(1);
 //                                if (ClearCount.get() == EveryClearGlobalTrash) {
-//                                    //清理公共垃圾桶
+//                                    //清理公共垃圾�?
 //                                    ClearCount.set(0);
 //                                    ClearContainer(GlobalTrashList);
 //                                    PrintCountMessage(-2);
@@ -385,7 +394,7 @@ public class FoliaClearItemsTask {
 //                            ClearCount.addAndGet(1);
 
                             if (ClearCount.get() == EveryClearGlobalTrash) {
-                                //清理公共垃圾桶
+                                //清理公共垃圾�?
 //                                ClearCount.set(0);
                                 ClearContainer(GlobalTrashList);
 //                                PrintCountMessage(-2);
@@ -407,6 +416,38 @@ public class FoliaClearItemsTask {
 
 
                         AtomicInteger allChunkTask = new AtomicInteger(0);
+                        AtomicBoolean completionTriggered = new AtomicBoolean(false);
+
+                        Runnable finishTask = () -> {
+                            PrintCountMessage(0);
+
+                            publicTime = 0;
+
+                            if (finalCount!=0) {
+                                Bukkit.getAsyncScheduler().runDelayed(main, scheduledTask1 -> {
+                                    if (ClearCount.get() == EveryClearGlobalTrash) {
+                                        ClearCount.set(0);
+                                        PrintCountMessage(-2);
+                                    } else {
+                                        if (EveryClearGlobalTrash!=-1) {
+                                            PrintCountMessage(-1);
+                                        }
+                                    }
+
+                                    Bukkit.getAsyncScheduler().runDelayed(main, new Consumer<ScheduledTask>() {
+                                        @Override
+                                        public void accept(ScheduledTask scheduledTask) {
+
+                                            count = finalCount;
+
+                                            bossBar.removeAll();
+                                        }
+                                    }, 3, TimeUnit.SECONDS);
+
+
+                                }, 3, TimeUnit.SECONDS);
+                            }
+                        };
 
                         for (World world : WorldList) {
 
@@ -426,6 +467,11 @@ public class FoliaClearItemsTask {
                                             locationSet = WorldToLocation.get(world).getLocationSet();
                                         }
                                         for (Entity entity : chunk.getEntities()) {
+                                            if (entity instanceof Player){
+                                                continue;
+                                            }
+
+
 //                                        ChunkMap.put(entity,null);
                                             if (entity instanceof ExperienceOrb) {
                                                 if (ClearExpBottle) {
@@ -447,7 +493,7 @@ public class FoliaClearItemsTask {
                                                     //如果物品不在世界垃圾桶ban表里
                                                     if (!WorldToLocation.get(world).getBanItemSet().contains(itemStackTypeString)) {
 //                                        if (main.getConfig().getBoolean("Set.Debug")) {
-//                                            consoleSay(ChatColor.BLUE + "还剩 " + inventoryList.size() + " 个箱子");
+//                                            consoleSay(ChatColor.BLUE + "还剩 " + inventoryList.size() + " 个箱�?);
 //                                        }
                                                         for (Location location : locationSet) {
 
@@ -465,7 +511,7 @@ public class FoliaClearItemsTask {
                                                                 Set<Location> locationSet1 = WorldToLocation.get(world).getLocationSet();
                                                                 locationSet1.remove(location);
                                                                 DataSys.dataPut(world, locationSet1);
-//                                                    consoleSay(ChatColor.RED + "由于没有找到箱子，自动从存储中移除了该" + location.toString() + "位置");
+//                                                    consoleSay(ChatColor.RED + "由于没有找到箱子，自动从存储中移除了�? + location.toString() + "位置");
                                                                 String locationString = world.getName() + ": " + location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ();
                                                                 consoleSay(org.worldlisttrashcan.utils.Message.find("NotFindChest").replace("%location%", locationString));
                                                             }
@@ -487,7 +533,7 @@ public class FoliaClearItemsTask {
                                                         if (PlayerUUID != null) {
 
                                                             Player player = Bukkit.getPlayer(UUID.fromString(PlayerUUID));
-                                                            // 如果丢弃的所属玩家在线
+                                                            // 如果丢弃的所属玩家在�?
                                                             if (player != null) {
 
                                                                 Inventory inventory = PlayerToInventory.get(player);
@@ -554,7 +600,7 @@ public class FoliaClearItemsTask {
                                                     Boolean checkClean = matcher.checkClean(entity.getType().toString(), entity.getName());
                                                     if (checkClean != null) {
                                                         if (checkClean) {
-//                                                System.out.println("黑名单: "+entity.getType().toString());
+//                                                System.out.println("黑名�? "+entity.getType().toString());
                                                             entity.remove();
                                                             EntitySum.addAndGet(1);
                                                         }
@@ -564,7 +610,7 @@ public class FoliaClearItemsTask {
 //                                                    if (BlackNameList.contains(entity.getType().toString().toLowerCase()) ||
 //                                                            BlackNameList.contains(entity.getName().toLowerCase())
 //                                                    ) {
-////                                        System.out.println("黑名单: "+entity.getType().toString());
+////                                        System.out.println("黑名�? "+entity.getType().toString());
 //                                                        entity.remove();
 //                                                        EntitySum++;
 //                                                        continue;
@@ -573,7 +619,7 @@ public class FoliaClearItemsTask {
 //                                                    if (WhiteNameList.contains(entity.getType().toString().toLowerCase()) ||
 //                                                            WhiteNameList.contains(entity.getName().toLowerCase())
 //                                                    ) {
-////                                        System.out.println("白名单: "+entity.getType().toString());
+////                                        System.out.println("白名�? "+entity.getType().toString());
 //                                                        continue;
 //                                                    }
 
@@ -587,25 +633,47 @@ public class FoliaClearItemsTask {
                                                         continue;
                                                     }
 
-                                                    if (entity instanceof org.bukkit.entity.Animals) {
-                                                        if (ClearAnimals) {
-                                                            entity.remove();
-                                                            EntitySum.addAndGet(1);
-                                                            continue;
-                                                        }
-//                                                    } else if (entity instanceof Enemy) {
-//                                                    } else if (entity instanceof Monster) {
-                                                    } else if (isMonster(entity)) {
-                                                        if (ClearMonster) {
-                                                            entity.remove();
-                                                            EntitySum.addAndGet(1);
+//                                                    if (entity instanceof org.bukkit.entity.Animals) {
+//                                                        if (ClearAnimals) {
+//                                                            entity.remove();
+//                                                            EntitySum.addAndGet(1);
+//                                                            continue;
+//                                                        }
+////                                                    } else if (entity instanceof Enemy) {
+////                                                    } else if (entity instanceof Monster) {
+//                                                    } else if (isMonster(entity)) {
+//                                                        if (ClearMonster) {
+//                                                            entity.remove();
+//                                                            EntitySum.addAndGet(1);
+//
+//                                                            continue;
+//                                                        }
+//                                                    }else if (entity instanceof Projectile) {
+//                                                        if (ClearProjectile) {
+//                                                            entity.remove();
+////                                            System.out.println("ClearMonster: "+entity.getType().toString());
+//                                                            EntitySum.addAndGet(1);
+//                                                            continue;
+//                                                        }
+//                                                    }
 
+                                                    if (entity instanceof LivingEntity) {
+                                                        if (ClearMonster && isMonster(entity)) {
+                                                            entity.remove();
+                                                            EntitySum.addAndGet(1);
                                                             continue;
+                                                        } else {
+//                                                            if (ClearAnimals && entity instanceof org.bukkit.entity.Animals) {
+                                                            if (ClearAnimals) {
+                                                                entity.remove();
+                                                                EntitySum.addAndGet(1);
+                                                                continue;
+                                                            }
                                                         }
-                                                    }else if (entity instanceof Projectile) {
+                                                    }
+                                                    else if (entity instanceof Projectile) {
                                                         if (ClearProjectile) {
                                                             entity.remove();
-//                                            System.out.println("ClearMonster: "+entity.getType().toString());
                                                             EntitySum.addAndGet(1);
                                                             continue;
                                                         }
@@ -620,7 +688,7 @@ public class FoliaClearItemsTask {
 
                                         // TODO
                                         int taskCount = allChunkTask.addAndGet(-1);
-                                        if (taskCount <= 0) {
+                                        if (taskCount <= 0 && completionTriggered.compareAndSet(false, true)) {
                                             PrintCountMessage(0);
 
                                             publicTime = 0;
@@ -641,7 +709,7 @@ public class FoliaClearItemsTask {
 //                                                    ClearCount.addAndGet(1);
 
                                                     if (ClearCount.get() == EveryClearGlobalTrash) {
-                                                        //清理公共垃圾桶
+                                                        //清理公共垃圾�?
                                                         ClearCount.set(0);
 //                                                        ClearContainer(GlobalTrashList);
 
@@ -681,8 +749,12 @@ public class FoliaClearItemsTask {
                         }
 
 
-                        //在这一步，直接输出会输出0哥实体和清理的垃圾，因为是瞬时的，而我们的清理是异步的
+                        //在这一步，直接输出会输�?哥实体和清理的垃圾，因为是瞬时的，而我们的清理是异步的
 //                    PrintCountMessage(count);
+
+                        if (allChunkTask.get() == 0 && completionTriggered.compareAndSet(false, true)) {
+                            finishTask.run();
+                        }
 
                     } catch (Exception e) {
                         consoleSay(ChatColor.RED + "该服务器环境似乎不兼容此插件的某些功能，请将报错截图发送至作者QQ 2831508831");
@@ -744,3 +816,4 @@ public class FoliaClearItemsTask {
     }
 
 }
+

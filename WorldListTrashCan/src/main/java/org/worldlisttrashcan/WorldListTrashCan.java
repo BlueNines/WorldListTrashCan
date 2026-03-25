@@ -17,6 +17,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -748,6 +750,18 @@ public final class WorldListTrashCan extends JavaPlugin {
 
         GlobalItemSetString = new HashSet<>(main.getConfig().getStringList("GlobalBanItem"));
         int MaxCount = main.getConfig().getInt("Set.GlobalTrash.MaxPage");
+
+        if(GlobalTrashList!=null && !GlobalTrashList.isEmpty()){
+//            System.out.println("公共垃圾桶已经初始化了");
+            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                InventoryView openInventory = onlinePlayer.getOpenInventory();
+                if (GlobalTrashList.contains(openInventory.getTopInventory())){
+//                    System.out.println("玩家 "+onlinePlayer.getName()+" 打开了菜单 正在关闭");
+                    onlinePlayer.closeInventory();
+                }
+            }
+        }
+
         globalTrashGui = new GlobalTrashGui(GlobalTrashList,MaxCount);
 
 

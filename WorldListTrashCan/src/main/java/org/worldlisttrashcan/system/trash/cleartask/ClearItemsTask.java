@@ -246,10 +246,16 @@ public class ClearItemsTask {
 //                    Bukkit.broadcastMessage(ChatIntToMessage.get(count).replace("%GlobalTrashAddSum%", GlobalTrashItemSum + "").replace("%DealItemSum%", DealItemSum + "").replace("%EntitySum%", EntitySum + "").replace("%ClearGlobalCount%", EveryClearGlobalTrash - ClearCount + ""));
 //                    message.consoleSay(ChatIntToMessage.get(count).replace("%GlobalTrashAddSum%", GlobalTrashItemSum + "").replace("%DealItemSum%", DealItemSum + "").replace("%EntitySum%", EntitySum + "").replace("%ClearGlobalCount%", EveryClearGlobalTrash - ClearCount + ""));
 
+                    String text = ChatIntToMessage.get(count).replace("%GlobalTrashAddSum%", GlobalTrashItemSum + "")
+                            .replace("%DealItemSum%", DealItemSum + "").replace("%EntitySum%", EntitySum + "")
+                            .replace("%ClearGlobalCount%", EveryClearGlobalTrash - ClearCount + "");
+                    //如果是最后一次播报
+                    if(count==0&&(ChatClickCommand!=null&&!ChatClickCommand.isEmpty())){
+                        if(logFlag){
+                            customLogToFile(text);
+                        }
+                    }
                     for (Player player : Bukkit.getOnlinePlayers()) {
-                        String text = ChatIntToMessage.get(count).replace("%GlobalTrashAddSum%", GlobalTrashItemSum + "")
-                                .replace("%DealItemSum%", DealItemSum + "").replace("%EntitySum%", EntitySum + "")
-                                .replace("%ClearGlobalCount%", EveryClearGlobalTrash - ClearCount + "");
                         text = papiReplace(text,player);
 
                         //如果是最后一次播报
@@ -258,9 +264,9 @@ public class ClearItemsTask {
 //                            message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, ChatClickCommand));
 //                            player.spigot().sendMessage(message);
                             sendChatMessageToAction(player,text,ClickEvent.Action.RUN_COMMAND,ChatClickCommand);
-                            if(logFlag){
-                                customLogToFile(text);
-                            }
+//                            if(logFlag){
+//                                customLogToFile(text);
+//                            }
                         }else {
                             player.sendMessage(color(text));
                         }
@@ -268,7 +274,7 @@ public class ClearItemsTask {
 
                     }
                     if (ChatConsoleLogFlag){
-                        org.worldlisttrashcan.utils.Message.consoleSay(ChatIntToMessage.get(count).replace("%GlobalTrashAddSum%", GlobalTrashItemSum + "").replace("%DealItemSum%", DealItemSum + "").replace("%EntitySum%", EntitySum + "").replace("%ClearGlobalCount%", EveryClearGlobalTrash - ClearCount + ""));
+                        org.worldlisttrashcan.utils.Message.consoleSay(text);
                     }
                 }
 
@@ -426,6 +432,11 @@ public class ClearItemsTask {
 
 
                             for (Entity entity : world.getEntities()) {
+
+                                if (entity instanceof Player){
+                                    continue;
+                                }
+
                                 if (entity instanceof ExperienceOrb) {
                                     if (ClearExpBottle) {
                                         entity.remove();
@@ -641,24 +652,45 @@ public class ClearItemsTask {
 //                                        continue;
 //                                    }
 
-                                        if (entity instanceof org.bukkit.entity.Animals) {
-                                            if (ClearAnimals) {
+//                                        if (entity instanceof org.bukkit.entity.Animals) {
+//                                            if (ClearAnimals) {
+//                                                entity.remove();
+////                                            System.out.println("ClearAnimals: "+entity.getType().toString());
+//                                                EntitySum++;
+//                                                continue;
+//                                            }
+//                                        } else if (isMonster(entity)) {
+//                                            if (ClearMonster) {
+//                                                entity.remove();
+////                                            System.out.println("ClearMonster: "+entity.getType().toString());
+//                                                EntitySum++;
+//                                                continue;
+//                                            }
+//                                        }else if (entity instanceof Projectile) {
+//                                            if (ClearProjectile) {
+//                                                entity.remove();
+////                                            System.out.println("ClearMonster: "+entity.getType().toString());
+//                                                EntitySum++;
+//                                                continue;
+//                                            }
+//                                        }
+                                        if (entity instanceof LivingEntity) {
+                                            if (ClearMonster && isMonster(entity)) {
                                                 entity.remove();
-//                                            System.out.println("ClearAnimals: "+entity.getType().toString());
                                                 EntitySum++;
                                                 continue;
+                                            } else {
+//                                                if (ClearAnimals && entity instanceof org.bukkit.entity.Animals) {
+                                                if (ClearAnimals) {
+                                                    entity.remove();
+                                                    EntitySum++;
+                                                    continue;
+                                                }
                                             }
-                                        } else if (isMonster(entity)) {
-                                            if (ClearMonster) {
-                                                entity.remove();
-//                                            System.out.println("ClearMonster: "+entity.getType().toString());
-                                                EntitySum++;
-                                                continue;
-                                            }
-                                        }else if (entity instanceof Projectile) {
+                                        }
+                                        else if (entity instanceof Projectile) {
                                             if (ClearProjectile) {
                                                 entity.remove();
-//                                            System.out.println("ClearMonster: "+entity.getType().toString());
                                                 EntitySum++;
                                                 continue;
                                             }

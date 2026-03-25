@@ -234,15 +234,20 @@ public class Method {
     //    //判断实体是否是怪物
     public static boolean isMonster(Entity entity) {
         String entityType = entity.getType().toString();
-        if (monsterTypes.contains(entityType.toLowerCase()))
+//        System.out.println("entityType = " + entityType);
+        if (monsterTypes.contains(entityType.toLowerCase())){
+//            System.out.println("monsterTypes.contains(entityType.toLowerCase())");
             return true;
+        }
         else if (entity instanceof Monster) {
+//            System.out.println("entity instanceof Monster");
             return true;
         }
         if (hasEnemyClass) {
-//            System.out.println("hasEnemyClass hasEnemyClass hasEnemyClass");
+//            System.out.println("hasEnemyClass ");
             return entity instanceof Enemy;
         }
+//        System.out.println("return false");
 
         return false;
     }
