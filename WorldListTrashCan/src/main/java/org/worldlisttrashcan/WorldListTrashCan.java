@@ -77,9 +77,8 @@ public final class WorldListTrashCan extends JavaPlugin {
     }
     public static GlobalTrashGui globalTrashGui;
 
-
-//    public static GlobalTrashGui globalTrashGui;
-
+    private static WorldListTrashCan instance;
+    private static dev.rosewood.rosestacker.api.RoseStackerAPI roseStackerAPI;
 
     public static SendMessageAbstract sendMessageAbstract;
     //公共垃圾桶
@@ -117,13 +116,8 @@ public final class WorldListTrashCan extends JavaPlugin {
     //    default: true
 
 
-
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-
-
-
-
         List<String> completions = new ArrayList<>();
         List<String> allSubCommands = Arrays.asList("PlayerTrash","DropMode","look","GlobalBan","help","reload","GlobalTrash","ban","add","clear");
         if (command.getName().equalsIgnoreCase("WorldListTrashCan")||command.getName().equalsIgnoreCase("wtc")) {
@@ -249,6 +243,15 @@ public final class WorldListTrashCan extends JavaPlugin {
             org.worldlisttrashcan.utils.Message.consoleSay("&c没有找到PlaceholderAPI插件，已自动关闭相关功能");
         }
 
+        instance = this;
+        if (Bukkit.getPluginManager().isPluginEnabled("RoseStacker")) {
+            try {
+                roseStackerAPI = dev.rosewood.rosestacker.api.RoseStackerAPI.getInstance();
+                getLogger().info("已挂钩RoseStacker，支持堆叠物品");
+            } catch (Exception e) {
+                getLogger().warning("无法获取RoseStacker API，将忽略堆叠物品");
+            }
+        }
 
 
         reload();
@@ -974,52 +977,9 @@ public final class WorldListTrashCan extends JavaPlugin {
             }
             GatherBanWorlds.addAll(main.getConfig().getStringList("GatherEntityLimitCount.BanWorldNameList"));
 
-
-
             ItemDropFlag = main.getConfig().getBoolean("GatherEntityLimitCount.ItemDropFlag");
         }
-
-
-
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public static Economy econ = null;
 
@@ -1039,18 +999,15 @@ public final class WorldListTrashCan extends JavaPlugin {
         return econ != null;
     }
 
+    public static WorldListTrashCan getInstance() {
+        return instance;
+    }
 
+    public static dev.rosewood.rosestacker.api.RoseStackerAPI getRoseStackerAPI() {
+        return roseStackerAPI;
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
+    public static boolean isRoseStackerEnabled() {
+        return roseStackerAPI != null;
+    }
 }
