@@ -39,13 +39,16 @@ public class ClearItemsTask {
         int totalAmount;                    // 物品总数量（用于计算原始组数）
         int minDurability;                  // 最小耐久（用于排序）
         int minOrder;                       // 最早加入时间（用于排序）
-        List<ItemStack> originalStacks;     // 原始 ItemStack 列表（已按耐久、加入顺序排序）
+        List<ItemStack> originalStacks;     // 原始 ItemStack 列表（用于耐久、加入顺序排序）
         int maxStackSize;                   // 最大堆叠数
 
         // 动态属性（用于削减）
         int newAmount;                      // 调整后的总数量（削减后）
         int newSlots;                       // 调整后的组数（削减后）
     }
+
+    private final boolean enableSorting;
+    private final boolean enableReduction;
 
     public int getPublicTime() {
         return publicTime;
@@ -80,7 +83,7 @@ public class ClearItemsTask {
         }
         return false;
     }
-    public ClearItemsTask(int amount) {
+    public ClearItemsTask(int amount, boolean enableSorting, boolean enableReduction) {
         finalCount = amount;
         boolean BossBarFlag = main.getConfig().getBoolean("Set.BossBarFlag");
         boolean ChatFlag = main.getConfig().getBoolean("Set.ChatFlag");
@@ -90,6 +93,9 @@ public class ClearItemsTask {
         boolean TitleFlag = main.getConfig().getBoolean("Set.TitleFlag");
         boolean ActionBarFlag = main.getConfig().getBoolean("Set.ActionBarFlag");
         boolean CommandFlag = main.getConfig().getBoolean("Set.CommandFlag");
+        this.enableSorting = enableSorting;
+        this.enableReduction = enableReduction;
+
         Map<Integer,String> BossBarToMessage = new HashMap<>();
         for (String message : main.getConfig().getStringList("Set.BossBarMessageForCount")) {
             String[] strings= message.split(";");
@@ -161,6 +167,8 @@ public class ClearItemsTask {
         int bossBarMaxInt;
         bossBarMaxInt = Integer.parseInt(main.getConfig().getStringList("Set.BossBarMessageForCount").get(0).split(";")[0]);
         int EveryClearGlobalTrash = main.getConfig().getInt("Set.GlobalTrash.EveryClearGlobalTrash");
+
+
         bukkitRunnable = new BukkitRunnable() {
 //            final int finalCount = main.getConfig().getInt("Set.SecondCount");
             int count = finalCount;
@@ -286,7 +294,7 @@ public class ClearItemsTask {
                         EntitySum = 0;
                         ClearCount++;
 
-                        // ----- 提前清空全局垃圾桶（如果需要）-----
+                        // 提前清空公共垃圾桶（如果需要）
                         if (finalCount != 0) {
                             if (ClearCount == EveryClearGlobalTrash) {
                                 ClearCount = 0;
@@ -319,7 +327,7 @@ public class ClearItemsTask {
                             }
                         }
 
-                        // ----- 收集待加入全局垃圾桶的物品 -----
+                        // 收集待加入公共垃圾桶的物品
                         List<ItemStack> globalPendingItems = new ArrayList<>();
 
                         for (World world : WorldList) {
@@ -346,7 +354,8 @@ public class ClearItemsTask {
                                     Item item = (Item) entity;
                                     ItemStack itemStack = item.getItemStack();
 
-                                    // ----- 获取真实数量（兼容RoseStacker）-----
+                                    // 如果有装rosestacker，进行堆叠物品数量获取，否则不更新真实数量
+                                    // 方法见rosestacker的api文档
                                     int realAmount = itemStack.getAmount(); // 默认1
                                     if (WorldListTrashCan.isRoseStackerEnabled()) {
                                         try {
@@ -360,10 +369,10 @@ public class ClearItemsTask {
                                         } catch (Exception ignored) {}
                                     }
 
-                                    // ----- 拆分为符合原版堆叠上限的多个ItemStack -----
+                                    // 由于要按照堆叠组数进行排序，将大于堆叠上限的物品数量拆分为符合原版堆叠上限的多个ItemStack
                                     List<ItemStack> splitStacks = splitToMaxStack(itemStack, realAmount);
 
-                                    // ----- 对每个拆分后的ItemStack执行原有逻辑 -----
+                                    // 对每个拆分后的ItemStack执行原有逻辑
                                     for (ItemStack currentStack : splitStacks) {
                                         // 不处理带有关键lore的物品
                                         if (NoClearItemFlag(currentStack)) {
@@ -425,7 +434,7 @@ public class ClearItemsTask {
                                             }
                                         }
 
-                                        // 3. 全局垃圾桶处理（收集）
+                                        // 3. 公共垃圾桶处理（收集）
                                         if (flag && GlobalTrashGuiFlag && !GlobalItemSetString.contains(itemStackTypeString)) {
                                             globalPendingItems.add(currentStack.clone());
                                         }
@@ -479,30 +488,34 @@ public class ClearItemsTask {
                             }
                         }
 
-                        // ========== 统一处理全局垃圾桶 ==========
+                        // ========== 统一处理公共垃圾桶 ==========
                         if (!globalPendingItems.isEmpty()) {
-                            // 1. 分组排序
-                            List<MaterialStats> statsList = groupAndSort(globalPendingItems);
-                            //consoleSay(ChatColor.YELLOW + "[Debug] 分组统计结果:");
 
-                            // 2. 获取空闲格子数
-                            int freeSlots = getFreeSlots();
-                            //consoleSay(ChatColor.YELLOW + "[Debug] 空闲格子数: " + freeSlots);
-
-                            // 3. 溢出削减
-                            reduceIfNeeded(statsList, freeSlots);
-
-                            // 4. 重建物品列表
-                            // 确保 newAmount 已初始化（如果不削减，则使用原始总数量）
-                            for (MaterialStats stats : statsList) {
-                                if (stats.newAmount == 0) {
-                                    stats.newAmount = stats.totalAmount;
-                                    stats.newSlots = (stats.totalAmount + stats.maxStackSize - 1) / stats.maxStackSize;
+                            List<ItemStack> finalItems;
+                            if (enableSorting) {
+                                // 1. 分组排序
+                                List<MaterialStats> statsList = groupAndSort(globalPendingItems);
+                                // 2. 获取空闲格子数
+                                int freeSlots = getFreeSlots();
+                                // 3. 溢出削减
+                                if (enableReduction) {
+                                    reduceIfNeeded(statsList, freeSlots);
+                                } else {
+                                    for (MaterialStats stats : statsList) {
+                                        if (stats.newAmount == 0) {
+                                            stats.newAmount = stats.totalAmount;
+                                            stats.newSlots = (stats.totalAmount + stats.maxStackSize - 1) / stats.maxStackSize;
+                                        }
+                                    }
                                 }
+                                // 4. 重建物品列表
+                                finalItems = rebuildItems(statsList);
+                            } else {
+                                // 若不启用排序，则直接使用收集到的物品列表
+                                finalItems = new ArrayList<>(globalPendingItems);
                             }
-                            List<ItemStack> finalItems = rebuildItems(statsList);
 
-                            // 5. 添加到全局垃圾桶，仅记录添加情况，不修改GlobalTrashItemSum
+                            // 5. 添加到公共垃圾桶
                             for (ItemStack item : finalItems) {
                                 for (Inventory inv : GlobalTrashList) {
                                     Map<Integer, ItemStack> remaining = inv.addItem(item);
@@ -517,7 +530,6 @@ public class ClearItemsTask {
                                     }
                                 }
                             }
-                            //consoleSay(ChatColor.YELLOW + "[Debug] 全局垃圾桶添加完成");
                         }
 
                     } catch (Exception e) {
@@ -573,7 +585,7 @@ public class ClearItemsTask {
     }
 
     /**
-     * 计算全局垃圾桶当前空闲格子总数
+     * 计算公共垃圾桶当前空闲格子总数
      */
     private int getFreeSlots() {
         int free = 0;
@@ -591,7 +603,7 @@ public class ClearItemsTask {
     }
 
     /**
-     * 将物品列表按物品种类分组、统计，并排序（按组数升序 → 耐久升序 → 加入时间升序）
+     * 将物品列表按物品种类分组、统计，并排序（按组数升序、耐久升序、加入时间从小到大排序）
      */
     private List<MaterialStats> groupAndSort(List<ItemStack> items) {
         Map<Material, MaterialStats> map = new HashMap<>();
@@ -668,7 +680,7 @@ public class ClearItemsTask {
                 if (diff > 0) {
                     int reduce = diff / 2;
                     if (reduce > 0) {
-                        // 避免削减后组数小于 1（除非原组数就是 0）
+                        // 避免削减后组数小于 1
                         int newSlots = slots[i] - reduce;
                         if (newSlots < 1 && slots[i] > 0) newSlots = 1; // 保留至少一组
                         if (newSlots != slots[i]) {
