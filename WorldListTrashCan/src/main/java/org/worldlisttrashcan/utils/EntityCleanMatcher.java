@@ -8,11 +8,25 @@ import java.util.regex.Pattern;
 
 public class EntityCleanMatcher {
 
+    private static class Rule {
+        final String pattern;
+        final Pattern regex;
+        final boolean forceClean;
+        final boolean isRegex;
+
+        Rule(String pattern, Pattern regex, boolean forceClean, boolean isRegex) {
+            this.pattern = pattern;
+            this.regex = regex;
+            this.forceClean = forceClean;
+            this.isRegex = isRegex;
+        }
+    }
+
     private final Set<String> whiteExact = new HashSet<>();
     private final List<Pattern> whiteRegex = new ArrayList<>();
 
     private final Set<String> blackExact = new HashSet<>();
-    private final List<Pattern> blackRegex = new ArrayList<>();
+    private final List<Rule> blackRules = new ArrayList<>();
 
     public EntityCleanMatcher(
             List<String> whiteList,
@@ -25,6 +39,15 @@ public class EntityCleanMatcher {
     private void loadRules(List<String> rules, boolean white) {
         for (String raw : rules) {
             String rule = raw.toLowerCase();
+            boolean forceClean = true;
+
+            if (rule.contains(":")) {
+                String[] parts = rule.split(":");
+                if (parts.length == 2) {
+                    rule = parts[0].trim();
+                    forceClean = Boolean.parseBoolean(parts[1].trim());
+                }
+            }
 
             if (rule.contains("*")) {
                 String regex = rule
@@ -36,7 +59,7 @@ public class EntityCleanMatcher {
                 if (white) {
                     whiteRegex.add(pattern);
                 } else {
-                    blackRegex.add(pattern);
+                    blackRules.add(new Rule(rule, pattern, forceClean, true));
                 }
             } else {
                 if (white) {
@@ -48,26 +71,20 @@ public class EntityCleanMatcher {
         }
     }
 
-    /**
-     * @return true = 应该被清理
-     * false = 不应该被清理
-     * null = 不在黑白名单中
-     */
     public Boolean checkClean(String entityType, String entityName) {
         entityType = entityType.toLowerCase();
         entityName = entityName.toLowerCase();
 
-        // 白名单优先
+        boolean hasCustomName = entityName != null && !entityName.isEmpty() && !entityName.equals(entityType);
+
         if (matchWhite(entityType) || matchWhite(entityName)) {
             return false;
         }
 
-        // 黑名单
-        if (matchBlack(entityType) || matchBlack(entityName)) {
+        if (matchBlack(entityType, hasCustomName) || matchBlack(entityName, hasCustomName)) {
             return true;
         }
 
-        // 默认不清理
         return null;
     }
 
@@ -80,11 +97,19 @@ public class EntityCleanMatcher {
         return false;
     }
 
-    private boolean matchBlack(String value) {
-        if (blackExact.contains(value)) return true;
+    private boolean matchBlack(String value, boolean hasCustomName) {
+        if (blackExact.contains(value)) {
+            return true;
+        }
 
-        for (Pattern p : blackRegex) {
-            if (p.matcher(value).matches()) return true;
+        for (Rule rule : blackRules) {
+            if (rule.regex.matcher(value).matches()) {
+                if (rule.forceClean) {
+                    return true;
+                } else {
+                    return !hasCustomName;
+                }
+            }
         }
         return false;
     }
