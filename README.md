@@ -1,5 +1,6 @@
 # 插件已有重构版，如果要发issue或者提交pr、clone，请转移到下面的仓库链接
 # The plugin has been refactored. If you want to issue or submit PR or clone, please transfer to the following repository link
+
 [WorldTrashCan-Refactoring]([链接地址](https://github.com/BlueNines/WorldTrashCan-Refactoring.git))
 
 ## Allows players to customize their home world's trash bin.
