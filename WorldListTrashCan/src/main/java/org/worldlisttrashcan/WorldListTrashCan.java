@@ -18,7 +18,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -42,8 +41,6 @@ import org.worldlisttrashcan.system.limitentity.LimitMain;
 import org.worldlisttrashcan.system.limitentity.PaperEntityMoveEvent;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 import static org.worldlisttrashcan.system.autotrash.AutoTrashListener.NoWorldTrashCanEnterPersonalTrashCan;
 import static org.worldlisttrashcan.system.autotrash.AutoTrashListener.OriginalFeatureClearItemAddGlobalTrashModel;
@@ -58,7 +55,6 @@ import static org.worldlisttrashcan.utils.Message.*;
 public final class WorldListTrashCan extends JavaPlugin {
 
     public static Plugin main;
-
 
     public static BossBar bossBar = Bukkit.createBossBar("default", BarColor.BLUE, BarStyle.SOLID);
 
@@ -77,15 +73,12 @@ public final class WorldListTrashCan extends JavaPlugin {
     }
     public static GlobalTrashGui globalTrashGui;
 
-
-//    public static GlobalTrashGui globalTrashGui;
-
+    private static WorldListTrashCan instance;
+    private static dev.rosewood.rosestacker.api.RoseStackerAPI roseStackerAPI;
 
     public static SendMessageAbstract sendMessageAbstract;
     //公共垃圾桶
     public static List<Inventory> GlobalTrashList = new ArrayList<>();
-
-
 
     //tab补全专项代码
     //commands:
@@ -116,14 +109,8 @@ public final class WorldListTrashCan extends JavaPlugin {
     //    description: 玩家打开个人垃圾桶的权限
     //    default: true
 
-
-
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-
-
-
-
         List<String> completions = new ArrayList<>();
         List<String> allSubCommands = Arrays.asList("PlayerTrash","DropMode","look","GlobalBan","help","reload","GlobalTrash","ban","add","clear");
         if (command.getName().equalsIgnoreCase("WorldListTrashCan")||command.getName().equalsIgnoreCase("wtc")) {
@@ -153,30 +140,22 @@ public final class WorldListTrashCan extends JavaPlugin {
 //                }
 //            }
 
-
-
 //                    String partial = args[0].toLowerCase();
 //                    // 根据输入的部分提供匹配的命令
 //                    if ("help".startsWith(partial)) {
 //                        completions.add("help");
 //                    }
 
-
         }
 
         return completions;
     }
 
-
-
-
     //这个是 物品碰到仙人掌，碰到岩浆，虚无，而消失的情况的垃圾桶
     //应群友要求，我本来想把以上情况写到公共垃圾桶里的
 //    public static List<Inventory> RemoveGlobalTrashList = new ArrayList<>();
 
-
     public static Papi papi = null;
-
 
     static public boolean EconomyFlag = false;
 
@@ -212,12 +191,9 @@ public final class WorldListTrashCan extends JavaPlugin {
 
         hasEnemyClass = Method.isClassPresent("org.bukkit.entity.Enemy");
 
-
-
 //        System.out.println("Bukkit.getServer().getVersion().contains "+Bukkit.getServer().getVersion());
 //        IsPaperServer = Bukkit.getServer().getVersion().contains("Paper");
         IsPaperServer = AutoCheckPaperServer();
-
 
         Is1_12_1_16Server = IsVersion.isServerVersionLowerThan("1.16.0");
 
@@ -229,18 +205,11 @@ public final class WorldListTrashCan extends JavaPlugin {
 
         Is1_21_5_21_NServer = !IsVersion.isServerVersionLowerThan("1.21.5");
 
-//        System.out.println("Is1_12_1_16Server "+Is1_12_1_16Server);
-//        System.out.println("Is1_16_1_20Server "+Is1_16_1_20Server);
-//        System.out.println("Is1_21_1_21_XServer "+Is1_21_1_21_XServer);
-//        System.out.println("Is1_21_1_21_5Server "+Is1_21_1_21_5Server);
-//        System.out.println("Is1_21_5_21_NServer "+Is1_21_5_21_NServer);
-
         if (!setupEconomy() ) {
             org.worldlisttrashcan.utils.Message.consoleSay("&c没有找到Vault插件，已自动关闭相关功能");
         }else {
             EconomyFlag = true;
         }
-
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             papi = new Papi(this);
@@ -249,7 +218,15 @@ public final class WorldListTrashCan extends JavaPlugin {
             org.worldlisttrashcan.utils.Message.consoleSay("&c没有找到PlaceholderAPI插件，已自动关闭相关功能");
         }
 
-
+        instance = this;
+        if (Bukkit.getPluginManager().isPluginEnabled("RoseStacker")) {
+            try {
+                roseStackerAPI = dev.rosewood.rosestacker.api.RoseStackerAPI.getInstance();
+                getLogger().info("已挂钩RoseStacker，支持堆叠物品");
+            } catch (Exception e) {
+                getLogger().info("无法获取RoseStacker API，将忽略堆叠物品");
+            }
+        }
 
         reload();
 
@@ -259,7 +236,6 @@ public final class WorldListTrashCan extends JavaPlugin {
         //限制整个世界的实体数量的监听器类
         LimitMain limitMain = new LimitMain();
         Bukkit.getPluginManager().registerEvents(limitMain, this);
-
 
         //警告：folia服务器只能用上面的，不能用bukkit延时任务来检查密集实体
 //        if((IsPaperServer &&!compareVersions("1.13.0")) || IsFoliaServer){
@@ -279,12 +255,6 @@ public final class WorldListTrashCan extends JavaPlugin {
             bukkitClearGatherEntityTask.Start();
         }
 
-
-
-
-
-
-
     }
 
 //    static public AutoTrashListener autoTrashListener;
@@ -292,8 +262,6 @@ public final class WorldListTrashCan extends JavaPlugin {
     static public BukkitClearGatherEntityTask bukkitClearGatherEntityTask;
 
     public static Map<Player,World> PlayerToWorld = new HashMap<>();
-
-
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -320,9 +288,6 @@ public final class WorldListTrashCan extends JavaPlugin {
 ////                        foliaClearItemsTask = new FoliaClearItemsTask(0);
 ////                        Bukkit.getAsyncScheduler().runNow(main,new FoliaClearItemsTask(0).getFoliaRunnable());
 //
-//
-//
-//
 ////                        foliaClearItemsTask.getFoliaTask().cancel();
 //                    }
 //                    if(clearItemsTask!=null){
@@ -332,9 +297,6 @@ public final class WorldListTrashCan extends JavaPlugin {
 //                        new ClearItemsTask(0).getBukkitRunnable().run();
 ////                        clearItemsTask.getBukkitRunnable().cancel();
 //                    }
-
-
-
 
                     if(IsFoliaServer){
 //                        if(foliaClearItemsTask!=null){
@@ -346,19 +308,18 @@ public final class WorldListTrashCan extends JavaPlugin {
                         Bukkit.getAsyncScheduler().runNow(main,new FoliaClearItemsTask(0).getFoliaRunnable());
                         foliaClearItemsTask = new FoliaClearItemsTask(main.getConfig().getInt("Set.SecondCount"));
 
-
                         foliaClearItemsTask.Start();
                     }else {
 
                         clearItemsTask.Stop();
 
-                        new ClearItemsTask(0).getBukkitRunnable().run();
+                        new ClearItemsTask(0,false,false).getBukkitRunnable().run();
 //                        System.out.println("clearItemsTask ");
-                        clearItemsTask = new ClearItemsTask(main.getConfig().getInt("Set.SecondCount"));
-
+                        clearItemsTask = new ClearItemsTask(main.getConfig().getInt("Set.SecondCount"),
+                                getConfig().getBoolean("Set.GlobalTrash.EnableSorting", true),
+                                getConfig().getBoolean("Set.GlobalTrash.EnableReduction", true));
 
                         clearItemsTask.Start();
-
 
                     }
 
@@ -400,23 +361,17 @@ public final class WorldListTrashCan extends JavaPlugin {
                         PlayerToWorld.put(player,player.getWorld());
                         sender.sendMessage(org.worldlisttrashcan.utils.Message.find("SecondCountdown"));
                         if(IsFoliaServer){
-                            ScheduledTask task = player.getScheduler().runDelayed(main, new Consumer<ScheduledTask>() {
-//                                int count = 0;
-
-                                @Override
-                                public void accept(ScheduledTask scheduledTask) {
+                            //                                int count = 0;
+                            ScheduledTask task = player.getScheduler().runDelayed(main, scheduledTask -> {
 //                                    if(count>3){
-                                        if(PlayerToWorld.get(player)!=null){
-                                            PlayerToWorld.remove(player);
-                                            sender.sendMessage(org.worldlisttrashcan.utils.Message.find("SecondCountdownEnd"));
-                                        }else {
-
-                                        }
-                                        //stop
+                                    if(PlayerToWorld.get(player)!=null){
+                                        PlayerToWorld.remove(player);
+                                        sender.sendMessage(org.worldlisttrashcan.utils.Message.find("SecondCountdownEnd"));
+                                    }
+                                    //stop
 //                                    }
 
 //                                    count++;
-                                }
                             }, () -> consoleSay("Error,Player is null"),60L);
                         }else {
                             new BukkitRunnable(){
@@ -428,8 +383,6 @@ public final class WorldListTrashCan extends JavaPlugin {
                                         if(PlayerToWorld.get(player)!=null){
                                             PlayerToWorld.remove(player);
                                             sender.sendMessage(org.worldlisttrashcan.utils.Message.find("SecondCountdownEnd"));
-                                        }else {
-
                                         }
                                         cancel();
                                     }
@@ -459,7 +412,9 @@ public final class WorldListTrashCan extends JavaPlugin {
                     if (sender.hasPermission("WorldListTrashCan.GlobalBan")||sender.isOp()) {
                         Player player = ((Player) sender).getPlayer();
                         Inventory inventory = (new BanGui()).getGlobalInventory(player);
-                        player.openInventory(inventory);
+                        if (player != null) {
+                            player.openInventory(inventory);
+                        }
 //                        for (ItemStack itemStack : inventory) {
 //                            if(itemStack!=null){
 //                                player.sendMessage(ChatColor.BLUE+"物品："+itemStack.getType());
@@ -485,7 +440,9 @@ public final class WorldListTrashCan extends JavaPlugin {
                             inventory = autoTrashListener.InitPlayerInv(player);
                             autoTrashListener.getPlayerToInventory().put(player,inventory);
                         }
-                        player.openInventory(inventory);
+                        if (player != null) {
+                            player.openInventory(inventory);
+                        }
 //                        for (ItemStack itemStack : inventory) {
 //                            if(itemStack!=null){
 //                                player.sendMessage(ChatColor.BLUE+"物品："+itemStack.getType());
@@ -505,7 +462,9 @@ public final class WorldListTrashCan extends JavaPlugin {
                     if (sender.hasPermission("WorldListTrashCan.GlobalTrashOpen")||sender.isOp()) {
                         Player player = ((Player) sender).getPlayer();
                         Inventory inventory = globalTrashGui.getInventory();
-                        player.openInventory(inventory);
+                        if (player != null) {
+                            player.openInventory(inventory);
+                        }
                     }else {
                         sender.sendMessage(org.worldlisttrashcan.utils.Message.find("NotHavePermission").replace("%permission%","WorldListTrashCan.GlobalTrashOpen"));
                     }
@@ -578,9 +537,7 @@ public final class WorldListTrashCan extends JavaPlugin {
                         // 发送消息给玩家
                         player.spigot().sendMessage(clipboardMessage);
 
-
 //                        message.consoleSay(player,message.find("HandItem").replace("%item%",player.getInventory().getItemInMainHand().getType().toString()));
-
 
 //                        for (Entity entity : player.getChunk().getEntities()) {
 //                            consoleSay(sender,"entity 1getName "+entity.getName());
@@ -589,10 +546,6 @@ public final class WorldListTrashCan extends JavaPlugin {
 ////                            consoleSay(sender,"entity 1getScoreboardEntryName "+entity.getScoreboardEntryName());
 //                            consoleSay(sender,"entity 1getEntitySpawnReason "+entity.getEntitySpawnReason());
 //                        }
-
-
-
-
 
                         player.sendMessage(org.worldlisttrashcan.utils.Message.find("PleaseRightEntity"));
                     }else {
@@ -628,7 +581,6 @@ public final class WorldListTrashCan extends JavaPlugin {
 //                getLogger().info("发送指令者是: "+sender.getName());
 //                getLogger().info("是否有权限: "+sender.hasPermission("WorldListTrashCan.reload"));
 //                data.getConfig().getInt("WorldData." + world.getName() + ".RashMaxCount")
-
 
                 if (args.length > 2) {
                     if (sender.isOp()) {
@@ -667,7 +619,6 @@ public final class WorldListTrashCan extends JavaPlugin {
                                     .replace("%world%", world.getName())
                                     .replace("%count%", count + ""));
 
-
                         } catch (Exception e) {
                             //不是整数
                             sender.sendMessage(org.worldlisttrashcan.utils.Message.find("NotInt"));
@@ -680,7 +631,6 @@ public final class WorldListTrashCan extends JavaPlugin {
                 } else {
                     sender.sendMessage(org.worldlisttrashcan.utils.Message.find("WorldListTrashCanAdd"));
                 }
-
 
             } else {
                 sender.sendMessage(ChatColor.GREEN + "WorldListTrashCan " + ChatColor.BLUE + "作者QQ：2831508831");
@@ -712,8 +662,6 @@ public final class WorldListTrashCan extends JavaPlugin {
 //        }
 //    }
 
-
-
     public static boolean GlobalTrashGuiFlag = false;
 //    static public data data;
 
@@ -727,7 +675,6 @@ public final class WorldListTrashCan extends JavaPlugin {
         saveDefaultConfig();
         reloadConfig();
 
-
         //支持RGB
         ConfigStringReplace(getConfig());
 
@@ -740,13 +687,9 @@ public final class WorldListTrashCan extends JavaPlugin {
 //        chanceMessage = getConfig().getString("Set.Lang");
 //        message.reloadMessage();
 
-
-
-
 //        IsFoliaServer = getConfig().getBoolean("IsFoliaServer");
         logFlag = main.getConfig().getBoolean("Set.GlobalTrash.Log.Enable");
 //        refinementLogFlag = main.getConfig().getBoolean("Set.GlobalTrash.Log.EnableRefinementLog");
-
 
         GlobalItemSetString = new HashSet<>(main.getConfig().getStringList("GlobalBanItem"));
         int MaxCount = main.getConfig().getInt("Set.GlobalTrash.MaxPage");
@@ -764,6 +707,14 @@ public final class WorldListTrashCan extends JavaPlugin {
 
         globalTrashGui = new GlobalTrashGui(GlobalTrashList,MaxCount);
 
+        if (!getConfig().contains("Set.GlobalTrash.EnableSorting")) {
+            getConfig().set("Set.GlobalTrash.EnableSorting", true);
+        }
+        if (!getConfig().contains("Set.GlobalTrash.EnableReduction")) {
+            getConfig().set("Set.GlobalTrash.EnableReduction", true);
+        }
+        saveConfig(); // 保存新增配置到文件
+
 
         if(IsFoliaServer){
             if(foliaClearItemsTask!=null){
@@ -775,16 +726,13 @@ public final class WorldListTrashCan extends JavaPlugin {
             if(clearItemsTask!=null){
                 clearItemsTask.Stop();
             }
-            clearItemsTask = new ClearItemsTask(main.getConfig().getInt("Set.SecondCount"));
+            clearItemsTask = new ClearItemsTask(main.getConfig().getInt("Set.SecondCount"),
+                    getConfig().getBoolean("Set.GlobalTrash.EnableSorting", true),
+                    getConfig().getBoolean("Set.GlobalTrash.EnableReduction", true));
             clearItemsTask.Start();
         }
 
-
-
         GlobalTrashGuiFlag = getConfig().getBoolean("Set.GlobalTrash.Flag");
-
-
-
 
         if(getConfig().getBoolean("SimpleOptimize.NotPickArrow")){
             HandlerList.unregisterAll(notPickArrowListener);
@@ -806,9 +754,6 @@ public final class WorldListTrashCan extends JavaPlugin {
         }else {
             HandlerList.unregisterAll(treadingFarmLandListener);
         }
-
-
-
 
 //        if(getConfig().getBoolean("WorldEntityLimitCount.Flag")){
 //        HandlerList.unregisterAll(limitMain);
@@ -833,18 +778,13 @@ public final class WorldListTrashCan extends JavaPlugin {
             HandlerList.unregisterAll(quickUseCommandListener);
         }
 
-
         if(getConfig().getBoolean("DropItemCheck.Flag")){
             HandlerList.unregisterAll(dropLimitListener);
             Bukkit.getPluginManager().registerEvents(dropLimitListener, this);
         }else {
             HandlerList.unregisterAll(dropLimitListener);
         }
-
-
-
-
-
+        
         // 这里要兼容低版本wtc的配置文件路径
 
 //        String OriginPath = "Set.GlobalTrash.OriginalFeatureClearItemAddGlobalTrash";
@@ -854,8 +794,6 @@ public final class WorldListTrashCan extends JavaPlugin {
         String OriginPath = "Set.PersonalTrashCan.OriginalFeatureClearItemAddGlobalTrash";
 
         OriginalFeatureClearItemAddGlobalTrashModel = main.getConfig().getInt(OriginPath+".UseModel");
-
-
 
         NoWorldTrashCanEnterPersonalTrashCan = main.getConfig().getBoolean("Set.PersonalTrashCan.NoWorldTrashCanEnterPersonalTrashCan");
 
@@ -891,7 +829,6 @@ public final class WorldListTrashCan extends JavaPlugin {
         NoClearContainerName = main.getConfig().getStringList("Set.NoClearContainerName");
         NoClearContainerType = main.getConfig().getStringList("Set.NoClearContainerType");
 
-
 //        main = this;
 
     }
@@ -906,8 +843,6 @@ public final class WorldListTrashCan extends JavaPlugin {
     QuickUseCommandListener quickUseCommandListener = new QuickUseCommandListener();
     BukkitPlayerMoveEvent bukkitPlayerMoveEvent = new BukkitPlayerMoveEvent();
     PaperEntityMoveEvent paperEntityMoveEvent = new PaperEntityMoveEvent();
-
-
 
     public void LoadWorldLimitEntityConfig(){
         if(!worldLimits.isEmpty()){
@@ -937,20 +872,6 @@ public final class WorldListTrashCan extends JavaPlugin {
             }
             BanWorlds.addAll(main.getConfig().getStringList("WorldEntityLimitCount.BanWorldNameList"));
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         if(GatherLimitFlag){
             GatherBanWorlds = new ArrayList<>();
             for(String EntityToCountStrAndLimitRange : main.getConfig().getStringList("GatherEntityLimitCount.DefaultCount")){
@@ -974,52 +895,9 @@ public final class WorldListTrashCan extends JavaPlugin {
             }
             GatherBanWorlds.addAll(main.getConfig().getStringList("GatherEntityLimitCount.BanWorldNameList"));
 
-
-
             ItemDropFlag = main.getConfig().getBoolean("GatherEntityLimitCount.ItemDropFlag");
         }
-
-
-
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public static Economy econ = null;
 
@@ -1036,21 +914,18 @@ public final class WorldListTrashCan extends JavaPlugin {
             return false;
         }
         econ = rsp.getProvider();
-        return econ != null;
+        return true;
     }
 
+    public static WorldListTrashCan getInstance() {
+        return instance;
+    }
 
+    public static dev.rosewood.rosestacker.api.RoseStackerAPI getRoseStackerAPI() {
+        return roseStackerAPI;
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
+    public static boolean isRoseStackerEnabled() {
+        return roseStackerAPI != null;
+    }
 }
